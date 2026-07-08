@@ -1,0 +1,55 @@
+# Fase 5 — REVISOR (subagente independiente, OBLIGATORIO antes de entregar)
+
+Objetivo: que el reel **no se entregue nunca** sin que un revisor independiente lo haya validado. Históricamente los fallos (silencios, repeticiones, desincronía) llegan a la entrega porque el mismo que monta es el que revisa. Este paso rompe eso: un subagente que NO montó el reel lo audita con ojos frescos y datos, y la entrega se bloquea si no pasa.
+
+## Cuándo
+
+Justo antes de la entrega (revisión local), sobre el **render final** (`renders/REEL-FINAL.mp4`), su corte (`edicion/corte-final.mp4`) y el `motion/index.html`. No se envía nada hasta tener un veredicto **PASS**.
+
+## Cómo lanzarlo
+
+Spawnea un subagente (tool `Agent`, tipo `general-purpose`) con el prompt de abajo. Pásale las rutas reales. El subagente devuelve JSON `{"verdict":"PASS|FAIL","scores":{...},"blockers":[],"warnings":[],"notes":"..."}`. Si `verdict != "PASS"`, **no entregues**: arregla los `blockers` y vuelve a lanzar el revisor. Itera hasta PASS.
+
+## Prompt del subagente (plantilla)
+
+> Eres el REVISOR final de un reel vertical de Valor de Ley. NO lo has montado tú: tu trabajo es encontrar fallos antes de que llegue a la entrega. Sé estricto; ante la duda, marca BLOCKER.
+>
+> Archivos:
+> - Render final: `<ruta REEL-FINAL.mp4>`
+> - Corte (audio): `<ruta corte-final.mp4>`
+> - Transcript del corte (word-level): `<ruta transcript-final.json>`
+> - Timeline Hyperframes: `<ruta motion/index.html>`
+>
+> Ejecuta y razona:
+> 1. **Cortes (compuerta dura):** corre
+>    `python3 ~/.claude/skills/reel-edita-vdl/scripts/verify-cut.py --media <corte-final.mp4> --transcript <transcript-final.json>`
+>    Si sale exit≠0 → BLOCKER con el detalle (silencios/repeticiones).
+> 2. **Ritmo estático (compuerta dura):** corre
+>    `python3 ~/.claude/skills/reel-edita-vdl/scripts/lint-timeline.py <motion/index.html> --json`
+>    Si `errors` no está vacío o reporta algún gap>4s → BLOCKER: "Hueco de ritmo >4s en [a,b] — viola la regla dura; rellénalo antes de entregar".
+> 3. **Audio real:** re-transcribe el AUDIO DEL RENDER FINAL desde cero con
+>    `ffmpeg -i <REEL-FINAL.mp4> -vn -ac 1 -b:a 64k -y /tmp/rev.m4a && bash ~/.claude/skills/reel-edita-vdl/scripts/transcribe-groq.sh /tmp/rev.m4a /tmp/rev-word.json`
+>    y corre `verify-cut.py --media <REEL-FINAL.mp4> --transcript /tmp/rev-word.json`. Lee el texto entero: ¿el habla fluye natural?, ¿hay alguna repetición o frase cortada? Cualquier repetición audible → BLOCKER.
+> 4. **Sincronía visual:** extrae frames del render (`ffmpeg -i <REEL-FINAL.mp4> -vf "fps=1/3" -y /tmp/qc_%03d.jpg`) y `Read` los frames; comprueba que cada gráfico/escena aparece cuando se dice lo que ilustra (no antes ni después). Desfases notables (>0.5s) → BLOCKER.
+> 5. **Cold open (0-3s):** ¿el payoff/gancho se entiende y es legible **desde el frame 1**? El titular-hook arriba solo se permite durante el cold open (≤2s); si hay texto arriba DESPUÉS de entrar el cuerpo → BLOCKER. Si el cold open lleva imagen IA, ¿se ve cutre (texto basura, manos/ojos raros, render hiperbrillante)? → BLOCKER.
+> 6. **Ritmo:** además del lint, en los tramos ágiles ¿hay ~5-7 cambios visuales/10s (ni lento <4, ni ruido >8)? ¿los tramos densos respiran con aire en vez de atropellarse a cortes? Desajuste claro → WARNING.
+> 7. **Legibilidad y solapes:** textos que se salen, se pisan, ilegibles, o dos escenas a la vez → BLOCKER.
+> 8. **Cero humo / datos:** ¿hay cifras/datos en pantalla (incluido el titular del cold open) que el audio NO dice (inventados)? → BLOCKER. (regla dura de VdL)
+> 9. **Clichés IA:** píldoras de sección genéricas arriba ("EL PROBLEMA/LA SOLUCIÓN" con puntito), etc. → WARNING.
+>
+> Calcula también un radar `scores` 0-10 (enteros). Mantén PASS/FAIL como compuerta dura: el radar es informativo y alimenta el Loop de retención (correlacionar score con retención-3s), no sustituye los blockers.
+> - `corte`: 10 si `verify-cut.py` sale exit 0 y la lectura real fluye limpia; baja con cada repetición, silencio o corte raro.
+> - `ritmo`: `10 - nº de gaps>4s*4 - (1 si densidad media <4)`, limitado a 0-10.
+> - `sincronia`: baja con desfases visual/audio >0.5s.
+> - `legibilidad`: baja por textos fuera de sitio, solapes o safe zone rota.
+> - `antihumo`: baja por datos inventados, clichés IA o afirmaciones que el audio no sostiene.
+>
+> Devuelve SOLO este JSON:
+> `{"verdict":"PASS|FAIL","scores":{"corte":N,"ritmo":N,"sincronia":N,"legibilidad":N,"antihumo":N},"blockers":["..."],"warnings":["..."],"notes":"resumen 1-2 frases"}`
+
+## Regla de entrega
+
+- `verdict == "PASS"` y `blockers == []` → se puede entregar.
+- Cualquier otra cosa → arreglar y re-revisar. No mandar a VdL un reel con blockers.
+- Cualquier gap>4s de `lint-timeline.py` es blocker de ritmo aunque el radar tenga buena nota.
+- Los `warnings` se le comunican a VdL en el mensaje de entrega (no bloquean, pero se dicen).

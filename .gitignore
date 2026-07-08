@@ -1,0 +1,13 @@
+# Secretos — nunca versionar (por si acaso; la skill no debe contenerlos)
+.env
+.env.local
+*.key
+
+# macOS
+.DS_Store
+Icon
+Icon?
+
+# Python
+__pycache__/
+*.pyc
