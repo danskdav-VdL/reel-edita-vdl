@@ -1,6 +1,10 @@
 # 04-recetas.md — Tratamientos visuales de VdL
 
-**Framework universal (esto es lo que no cambia):**
+**Lo que NO cambia nunca (ni con tratamiento nuevo):** el reel **cierra con la cortinilla oficial**
+(`estilo.md` §8) y **no lleva isotipo** en el cuerpo (`estilo.md` §4). Los beat sheets de abajo acaban
+en "[CORTINILLA]" justo por eso.
+
+**Framework universal (esto es lo que no cambia):
 1. **Lee el vídeo** (mira el corte aprobado): ¿qué tipo de contenido es?, ¿tiene demo?, ¿datos?, ¿es
    conceptual o práctico?, ¿dónde está el gancho?
 2. **Elige o COMBINA** un tratamiento de abajo que encaje con ESE contenido.
@@ -18,7 +22,7 @@ Cada receta: **cuándo · capas · ritmo · beat sheet de ejemplo**. Colores y f
   B-roll/rótulo que ilustra. Fondo liquid animado detrás en los tramos PiP. Subtítulos siempre.
 - **Ritmo:** medio-ágil. `snap` (zoom-punch) en palabras clave; `kpop`/`wipe` para rótulos; float sutil del PiP.
 - **Beat sheet:** [0-3s cold open] → [full-frame gancho + snap en keyword] → [PiP + chip de dato] →
-  [full-frame conexión] → [PiP + lista con `type`/checks] → [cierre con sting de isotipo].
+  [full-frame conexión] → [PiP + lista con `type`/checks] → [último tramo a cámara con el CTA] → [CORTINILLA].
 
 ## R2 · Screenshare / demo (enseñar producto/herramienta)
 **Cuándo:** VdL enseña una pantalla, web, app o flujo (encaja con "sistemas agénticos", tech, SaaS).
@@ -26,7 +30,7 @@ Cada receta: **cuándo · capas · ritmo · beat sheet de ejemplo**. Colores y f
   B-roll real (firecrawl) para capturas de webs/logos reales (ver `06-broll.md`).
 - **Ritmo:** medio; `typeIn` para comandos/URLs, `snap` sobre lo que señala, whoosh en cambios de vista.
 - **Beat sheet:** [cold open con el resultado de la demo] → [PiP + captura scrolleando] →
-  [zoom a la parte clave] → [chip con el "qué acaba de pasar"] → [endcard].
+  [zoom a la parte clave] → [chip con el "qué acaba de pasar"] → [CTA a cámara] → [CORTINILLA].
 
 ## R3 · Pantalla partida (comparativa / antes-después)
 **Cuándo:** contrastar dos cosas (antes/después, mal/bien, opción A/B).
@@ -43,10 +47,10 @@ Cada receta: **cuándo · capas · ritmo · beat sheet de ejemplo**. Colores y f
 
 ## R5 · Minimal-editorial (sobrio, premium)
 **Cuándo:** mensaje reflexivo, de marca o de posicionamiento; tono LinkedIn.
-- **Capas:** mucho aire, un solo rótulo Sora Light, fondo liquid MUY sutil (opacidad baja), isotipo discreto.
+- **Capas:** mucho aire, un solo rótulo Sora Light, fondo liquid MUY sutil (opacidad baja).
   Cámara full-frame o PiP estable.
 - **Ritmo:** con aire, `focusIn` (blur-resolve) en rótulos, transiciones `glass`. Pocos SFX.
-- **Beat sheet:** [cold open sobrio] → [idea 1 con focusIn] → [idea 2] → [cierre con isotipo lime].
+- **Beat sheet:** [cold open sobrio] → [idea 1 con focusIn] → [idea 2] → [cierre sobrio a cámara] → [CORTINILLA].
 
 ## R6 · Con elementos aportados (assets de VdL/cliente)
 **Cuándo:** VdL entrega imágenes/clips/capturas propios en la carpeta `assets/` del proyecto.
@@ -55,14 +59,21 @@ Cada receta: **cuándo · capas · ritmo · beat sheet de ejemplo**. Colores y f
 - **Ritmo:** según el material; sincroniza cada asset con lo que se dice (J-cut ~0.2s antes).
 - **Beat sheet:** adáptalo al material entregado.
 
-## R7 · Split arriba/abajo (encuadre partido)
+## R7 · Split arriba/abajo (encuadre partido) — LAYOUT DE REFERENCIA VdL
 **Cuándo:** cuando quieres ver a la persona **Y** un visual a la vez (una demo, una captura, un dato,
 una comparación) sin que uno tape al otro. Tercer encuadre junto a full-frame y PiP.
-- **Capas:** la **cámara ocupa una mitad** (normalmente la de ABAJO, a la altura natural de la cara) y el
-  **B-roll/visual la otra mitad** (arriba). Divisoria fina con acento lime. Alterna con full/PiP a lo largo del reel.
-- **Cómo (Hyperframes, solo transform):** cámara a media pantalla con `scale ~0.5` + `y` para anclarla en
-  su mitad; el visual (captura/imagen/escena) en la otra mitad, a pantalla-mitad. Nada de `top/left`
-  (usa `scale`+`x/y`). Subtítulos: colócalos en la franja de la CÁMARA, nunca sobre su cara.
+- **Layout canónico (regla dura, así debe quedar SIEMPRE que la pantalla se parta en dos):**
+  1. **Mitad SUPERIOR = panel OPACO de marca** (navy/degradado, ~`top 0`–`870px`) con el visual: tarjetas,
+     logos, lista, diagrama, chips… + kicker arriba. Borde inferior fino lime como divisoria.
+  2. **Mitad INFERIOR = la CÁMARA AMPLIADA mostrando el ROSTRO** (no un PiP diminuto en esquina). Baja el
+     encuadre con transform (`scale ~1.1` + `y ~+900`) para que la cara caiga en la mitad de abajo.
+  3. **Banda de SUBTÍTULO EXACTAMENTE en la COSTURA:** centrada **sobre la línea** que divide panel y
+     rostro (borde inferior del panel), NO flotando en el hueco por debajo. Técnica robusta: contenedor
+     `top:<alto-del-panel>px` + `.cap{transform:translateY(-50%)}` (se centra sobre la línea con 1 o 2
+     líneas). Nunca sobre la cara (que va más abajo). Ver `07-subtitulos.md` punto 6.
+- **Cómo (Hyperframes, SOLO transform):** cámara con `scale`+`y` (NUNCA `top/left/width/height` → el linter
+  `check` lo bloquea). El panel superior va en z ENCIMA de la cámara (opaco) para tapar la parte alta del
+  vídeo desplazado. Alterna con full-frame a lo largo del reel.
 - **Ritmo:** entra el visual con revelado sutil (`rev()`) sincronizado a lo que se dice.
 - **Beat sheet ej.:** [dice "mira esto"] → split (cara abajo + captura arriba) → [señala un dato] → snap en el dato.
 

@@ -96,20 +96,29 @@ Titulares/keywords en Sora SemiBold; subtítulos y cuerpo en Onest Medium.
 
 ---
 
-## 4. Isotipo (VERIFIED — usar el SVG tal cual, NUNCA inventar)
+## 4. Isotipo `<` — 🔴 POR DEFECTO **NO SE USA**
 
 El isotipo VdL es un **chevron `<`** (una "V" girada 90º en sentido horario), de un solo trazo,
-`viewBox 0 0 261 273.93`. Archivos en `BRAND_DIR` (4 versiones monocromas):
-- `Isotipo_VdL_Blanco_ffffff.svg` · `Isotipo_VdL_Verde_aae05a.svg` (lime) ·
-  `Isotipo_VdL_Morado_b41e82.svg` (magenta) · `Isotipo_VdL_BlueNavy_00004b.svg`.
+`viewBox 0 0 261 273.93`, en `BRAND_DIR` (`Isotipo_VdL_Blanco_ffffff.svg`, `..._Verde_aae05a.svg`,
+`..._Morado_b41e82.svg`, `..._BlueNavy_00004b.svg`).
 
-**Reglas duras:**
-- **NUNCA como marca de agua** (ni logo permanente en una esquina durante todo el vídeo).
-- Se usa como **sting**: pequeño y **rápido** (aparece ~0.5-1s y se va), en la **esquina superior derecha**
-  o en el hueco entre barbilla y banda de subtítulos. **Nunca sobre el rostro ni sobre los subtítulos.**
-  Sobre navy o el degradado, en **blanco o lime** para contraste. En el endcard sí puede ir grande y centrado.
-- **No lo redibujes ni lo aproximes**: incrusta el SVG del archivo. Sin reglas oficiales de área de
-  respeto → deja aire generoso alrededor y tamaño legible.
+🔴 **REGLA DURA (2026-08-18): el isotipo NO va en el vídeo. En ninguna parte.**
+Ni sting en esquina, ni marca de agua, ni endcard, ni dentro de una escena de B-roll.
+**La marca la pone la CORTINILLA DE CIERRE** (§8) — es el único sitio donde aparece la identidad.
+
+- **Solo se pone si VdL lo pide EXPLÍCITAMENTE** para ese vídeo ("mete el isotipo en X").
+  Si no lo pide, no se pone: no lo añadas "porque queda bien" ni para rellenar un beat.
+- Cuando se pida: incrusta el SVG del archivo (**no lo redibujes ni lo aproximes**), nunca sobre
+  el rostro ni sobre los subtítulos, y nunca como logo permanente.
+- 🔴 **NUNCA escribas el nombre "Valor de Ley" / "VALOR DE LEY" en pantalla.** Sigue vigente: el
+  nombre escrito no se pone nunca en el cuerpo del reel. (La cortinilla oficial de cierre sí lleva
+  el logotipo completo — es el asset de marca y va tal cual, sin tocar.)
+- **Cierre sin velo:** el último tramo a cámara (CTA tipo "Escríbenos", pregunta-gancho) va **sobre
+  el vídeo directo** (con sombra para legibilidad), la persona VISIBLE. Nada de velo oscuro/de color
+  encima del sujeto. Después entra la cortinilla.
+
+> Por qué: los stings sueltos competían con el cierre de marca y ensuciaban el remate. Con la
+> cortinilla el reel tiene UN cierre de marca, siempre el mismo, y el cuerpo queda limpio.
 
 ---
 
@@ -132,10 +141,14 @@ El isotipo VdL es un **chevron `<`** (una "V" girada 90º en sentido horario), d
   ganchos y listas). Regla dura del motor: ningún tramo >4s sin un beat visual.
 - **Audio: solo SFX sutiles, sin música.** SFX bajo la voz (ver `03-sfx-y-qc.md`).
 - **Cold open sí** (ver `08-cold-open.md`).
+- 🔴 **Nunca el sujeto semi-transparente detrás del texto** (look "fantasma"). Para un titular/rótulo a
+  pantalla: persona VISIBLE al 100% con texto en lower-third, o persona OCULTA (`opacity:0`) con fondo
+  plano/degradado/liquid animado detrás. Jamás el vídeo del sujeto atenuado al ~50% bajo el texto.
+- **Zoom-in rápido (`snap`) MÁX. 3 veces por reel** (recurso puntual, no relleno de ritmo).
 - **Emojis: al mínimo (`emoji_level=min` por defecto), look techy — NADA "playschool".** Evita caritas y
   emojis coloridos. Para marcar ideas usa **iconografía limpia**: glifos de línea, símbolos técnicos
   (`>`, `#`, `→`, `//`), números de paso/nivel, y el acento lime sobre Sora. `none` = cero emojis.
-  El isotipo VdL (chevron `<`) es el sello gráfico, no emojis.
+  El sello gráfico es la tipografía y el acento lime, no emojis (y **no** el isotipo — ver §4).
 
 ---
 
@@ -144,3 +157,37 @@ El isotipo VdL es un **chevron `<`** (una "V" girada 90º en sentido horario), d
 Todo el texto (subtítulos, rótulos, chips) va **a la altura del micrófono/pecho** — contenedor
 anclado en `top:~1040px`, **nunca pegado al borde inferior** (la UI de Reels/TikTok/Shorts tapa el
 tercio de abajo). La cara (~y300–1000) queda libre. Ver `07-subtitulos.md`.
+
+---
+
+## 8. Cierre de marca — LA CORTINILLA (obligatoria, siempre la misma)
+
+🔴 **REGLA DURA (2026-08-18): TODOS los reels de VdL terminan con la cortinilla oficial.**
+Siempre la misma, ni otra ni una versión rediseñada. No se diseña un endcard de marca a mano.
+
+> **CIERRE_VdL** (en esta máquina):
+> `/Users/diseno/Documents/Claude AI/recursos/Cierres reels/cortinilla_compartiendo valor.mp4`
+
+Qué es: barrido lime que revela el **logotipo completo** (`valor de ley` + chevron) sobre el
+degradado navy→magenta de marca. **4.0s · 1080×1920 · 60 fps · SIN pista de audio.**
+
+**Cómo se monta (un solo comando, hace todo):**
+```bash
+bash ~/.claude/skills/reel-edita-vdl/scripts/cierre.sh <reel-montado.mp4> <FINAL.mp4> [xfade]
+```
+El script resuelve la cortinilla, la **normaliza a la resolución y fps del reel**, le añade **pista de
+audio** (viene muda) + SFX suaves (whoosh en el barrido + ding al asentar el logotipo) y la une con
+**disolución cruzada** (`xfade` en vídeo + `acrossfade` en audio). Avisa si la disolución pisaría voz.
+
+**Reglas del cierre:**
+- **Transición: disolución cruzada, `0.5s` por defecto** (nunca corte seco: la cortinilla ya trae su
+  propio barrido y el corte seco encima se siente brusco).
+- Va **DESPUÉS de todo** (cold open + cuerpo + SFX ya mezclados). No entra en el timeline de
+  Hyperframes: se pega en post, como el cold open pero al final.
+- **La voz tiene que haber terminado antes de que empiece la disolución.** Deja ~0.5-0.8s de cola de
+  silencio al final del corte. Si no cabe, baja el `xfade` — nunca cortes una palabra.
+- **No la retoques**: ni recolorear, ni recortar, ni cambiarle el ritmo, ni superponerle texto.
+- No hace falta CTA gráfico encima: el CTA lo dice la voz en el último tramo a cámara.
+- Suma **~3.5s** a la duración final (4.0 − 0.5 de disolución). Cuéntalo al planificar duración.
+- Si la cortinilla no está en su sitio o hay varias en la carpeta, el script **para y pregunta** —
+  no improvises un cierre alternativo.

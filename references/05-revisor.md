@@ -36,6 +36,16 @@ Spawnea un subagente (tool `Agent`, tipo `general-purpose`) con el prompt de aba
 > 7. **Legibilidad y solapes:** textos que se salen, se pisan, ilegibles, o dos escenas a la vez → BLOCKER.
 > 8. **Cero humo / datos:** ¿hay cifras/datos en pantalla (incluido el titular del cold open) que el audio NO dice (inventados)? → BLOCKER. (regla dura de VdL)
 > 9. **Clichés IA:** píldoras de sección genéricas arriba ("EL PROBLEMA/LA SOLUCIÓN" con puntito), etc. → WARNING.
+> 10. **Isotipo `<` (regla dura 2026-08-18):** el chevron **NO debe aparecer en NINGUNA parte** del cuerpo del
+>     reel — ni sting en esquina, ni marca de agua, ni endcard, ni dentro de una escena. Si aparece y VdL no lo
+>     pidió explícitamente para este vídeo → **BLOCKER**. Tampoco el nombre "Valor de Ley"/"VALOR DE LEY"
+>     escrito en el cuerpo → BLOCKER. (Ojo: la CORTINILLA de cierre sí lleva el logotipo completo con el
+>     chevron — eso es correcto y NO es blocker. Y "VdL" en un subtítulo, porque se dice en el audio, tampoco.)
+> 11. **Cierre con cortinilla (regla dura 2026-08-18):** el reel **tiene que terminar con la cortinilla oficial**
+>     de VdL (barrido lime → logotipo `valor de ley` sobre degradado navy/magenta, ~4s), unida con **disolución
+>     cruzada** (no corte seco). Comprueba en los frames finales que está, que la disolución es suave, y que
+>     **no corta ninguna palabra** (aísla el audio del tramo y confirma que la voz acabó antes). Si falta la
+>     cortinilla, o hay un endcard de marca hecho a mano en su lugar, o la disolución pisa voz → **BLOCKER**.
 >
 > Calcula también un radar `scores` 0-10 (enteros). Mantén PASS/FAIL como compuerta dura: el radar es informativo y alimenta el Loop de retención (correlacionar score con retención-3s), no sustituye los blockers.
 > - `corte`: 10 si `verify-cut.py` sale exit 0 y la lectura real fluye limpia; baja con cada repetición, silencio o corte raro.
@@ -52,4 +62,5 @@ Spawnea un subagente (tool `Agent`, tipo `general-purpose`) con el prompt de aba
 - `verdict == "PASS"` y `blockers == []` → se puede entregar.
 - Cualquier otra cosa → arreglar y re-revisar. No mandar a VdL un reel con blockers.
 - Cualquier gap>4s de `lint-timeline.py` es blocker de ritmo aunque el radar tenga buena nota.
+- Sin cortinilla de cierre, o con isotipo no solicitado, **no se entrega** (reglas duras de marca).
 - Los `warnings` se le comunican a VdL en el mensaje de entrega (no bloquean, pero se dicen).

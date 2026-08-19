@@ -65,12 +65,17 @@ mientras la persona reaparece. Regla:
   que no queden "encendidos" si la escena se reutiliza o para evitar frames fantasma.
 - Un `#flash` blanco muy corto (0.05-0.08s) puede enmascarar el corte y darle punch.
 
-## Isotipo VdL como STING (no marca de agua)
+## Isotipo VdL — 🔴 NO se anima (no se pone)
 
-El isotipo (chevron `<`) se usa como **sting rápido**: pequeño, en la **esquina superior derecha** (o en
-el hueco entre barbilla y banda de subtítulos), entrada y salida rápidas (aparece ~0.5-1s y se va).
-**Nunca sobre el rostro ni sobre los subtítulos** (además de "nunca marca de agua"). En el endcard sí
-puede ir grande y centrado.
+**No montes stings de isotipo.** Desde 2026-08-18 el chevron `<` no va en el vídeo: ni en esquina, ni
+en el endcard, ni dentro de una escena. La marca la pone la **cortinilla de cierre**, que se pega en
+post (`estilo.md` §8, `scripts/cierre.sh`) y no forma parte de este timeline.
+
+Si VdL lo pide explícitamente para un vídeo concreto: incrusta el SVG de `BRAND_DIR` tal cual, entrada
+y salida rápidas (~0.5-1s), **nunca sobre el rostro ni sobre los subtítulos**, nunca permanente.
+
+Consecuencia práctica para el ritmo: el beat que antes rellenaba un sting ahora se cubre con un rótulo
+lower-third, un cambio de encuadre o un reveal de escena (ver `04-recetas.md`).
 
 ## Lint de ritmo: beats = llamadas `tl.*` con tiempo NUMÉRICO literal
 
@@ -101,9 +106,24 @@ Antes de escribir, lee (una vez) la skill `hyperframes`: `house-style.md` y `ref
 
 ⚠️ **Gotcha crítico:** el B-roll está DEBAJO de la cámara. Si la cámara está a pantalla completa, **tapa el B-roll**. Para que un B-roll se vea, la cámara DEBE estar en PiP (esquina). Cada escena B-roll va acompañada de `camPiP()`. (Un diagrama pensado como "overlay full-frame" no se verá si la cámara sigue full.)
 
-## La cámara: animar layout, no transform
+## La cámara: SOLO transform (regla dura, la impone el linter)
 
-Para el PiP con borde nítido, **anima `width/height/top/left/borderWidth/borderRadius`** (no `transform: scale`, que escala también el borde y la sombra). El zoom interno (push-in/snap) va en un wrapper hijo `#vidzoom` con `transform: scale`.
+🔴 **El linter `npm run check` BLOQUEA animar `top/left/width/height` en la cámara** (`gsap_non_transform_motion`:
+esas props se redondean a píxel entero y tiemblan en la captura frame-a-frame). Anima la cámara **solo con
+`scale` / `x` / `y` / `opacity`**. (El ejemplo de abajo con layout es HISTÓRICO — NO lo uses.)
+
+```js
+function camFull(t){ tl.to("#camera",{scale:1,x:0,y:0,opacity:1,duration:0.42,ease:"power3.inOut"},t); }
+function camPiP(t){  tl.to("#camera",{scale:0.40,x:284,y:470,duration:0.5,ease:"power3.inOut"},t); }   // esquina
+function camSplit(t){tl.to("#camera",{scale:1.12,x:0,y:900,duration:0.5,ease:"power3.inOut"},t); }      // rostro abajo (R7)
+function camHide(t){ tl.to("#camera",{opacity:0,duration:0.28},t); }  // ocultar en takeover (nunca fantasma)
+```
+El zoom interno (push-in/`snap`) va en el wrapper hijo `#vidzoom` con `transform: scale` (máx. 3 snaps/reel).
+`flash`/reveals con `fromTo` → usa **`immediateRender:false`** (si no, el estado `from` se aplica en t=0 y
+p.ej. un `#flash` blanco lava de blanco todo el arranque).
+
+### (histórico — NO usar) animar layout
+Para el PiP con borde nítido, ~~anima `width/height/top/left/borderWidth/borderRadius`~~. Ya no: el render lo rechaza.
 
 ```css
 #camera { position:absolute; top:0; left:0; width:1080px; height:1920px;

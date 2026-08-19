@@ -5,7 +5,12 @@
     "tipo": "mixto",
     "finalidad": "organico",
     "cta": null,
-    "plataformas": ["linkedin", "reels", "tiktok", "shorts"],
+    "plataformas": [
+      "linkedin",
+      "reels",
+      "tiktok",
+      "shorts"
+    ],
     "bruto": "clips-sueltos",
     "idioma": "es"
   },
@@ -25,8 +30,19 @@
     },
     "gradiente": {
       "tipo": "liquid / organic mesh",
-      "stops_order": ["navy", "violet", "magenta", "lime"],
-      "stops": ["#00004b", "#3a2770", "#b41e82", "#c865d1", "#aae05a"],
+      "stops_order": [
+        "navy",
+        "violet",
+        "magenta",
+        "lime"
+      ],
+      "stops": [
+        "#00004b",
+        "#3a2770",
+        "#b41e82",
+        "#c865d1",
+        "#aae05a"
+      ],
       "nota": "Firma de marca. Emular mesh/blur, NUNCA linear-gradient plano de 2 stops.",
       "animado": true,
       "animacion": {
@@ -37,37 +53,84 @@
         "requisito": "IMPRESCINDIBLE — el fondo de marca es SIEMPRE animado, nunca estatico"
       }
     },
-    "fuentes": { "display": "Sora", "texto": "Onest" },
+    "fuentes": {
+      "display": "Sora",
+      "texto": "Onest"
+    },
     "logo": {
       "tiene": true,
       "archivo": "recursos/brand-kit-vdl/Isotipo_VdL_Blanco_ffffff.svg",
       "forma": "chevron < (V girada 90 horario), un solo trazo, viewBox 0 0 261 273.93",
-      "versiones": ["blanco", "navy", "magenta", "lime"],
-      "posicion": "flexible",
-      "regla_dura": "NUNCA como marca de agua; usar el SVG tal cual, no reinventar"
+      "versiones": [
+        "blanco",
+        "navy",
+        "magenta",
+        "lime"
+      ],
+      "usar_en_video": false,
+      "regla_dura": "NO se usa en el video (2026-08-18): ni sting, ni esquina, ni endcard, ni marca de agua. Solo si VdL lo pide EXPLICITAMENTE para ese video. La marca la pone la cortinilla de cierre.",
+      "nombre_escrito": "NUNCA escribir 'Valor de Ley' en el cuerpo del reel"
     },
     "estetica": "hibrido-punchy-editorial",
     "referencia": null,
-    "fuente_brandkit": "recursos/brand-kit-vdl/VdL_brandkit.md"
+    "fuente_brandkit": "recursos/brand-kit-vdl/VdL_brandkit.md",
+    "cierre": {
+      "obligatorio": true,
+      "tipo": "cortinilla oficial de VdL (misma siempre)",
+      "archivo": "/Users/diseno/Documents/Claude AI/recursos/Cierres reels/cortinilla_compartiendo valor.mp4",
+      "propiedades": "4.0s · 1080x1920 · 60fps · SIN audio · barrido lime que revela el logotipo completo",
+      "transicion": "disolucion cruzada 0.5s (xfade video + acrossfade audio)",
+      "script": "scripts/cierre.sh <reel-montado.mp4> <FINAL.mp4> [xfade]",
+      "montaje": "en post, DESPUES de SFX (no entra en el timeline de Hyperframes)",
+      "regla_dura": "TODOS los reels cierran con ella. No se retoca, no se sustituye, no se disena un endcard a mano."
+    }
   },
-  "ritmo": { "velocidad": "media", "cold_open": true, "musica": "solo-sfx", "sfx": "sutiles" },
+  "ritmo": {
+    "velocidad": "media",
+    "cold_open": true,
+    "musica": "solo-sfx",
+    "sfx": "sutiles"
+  },
   "broll": {
     "real": true,
     "ia": true,
     "ia_proveedor": "magnific-mcp",
-    "propios": { "usa": true, "carpeta": "assets/ del proyecto" },
+    "propios": {
+      "usa": true,
+      "carpeta": "assets/ del proyecto"
+    },
     "rotulos": "lo-justo",
     "dataviz": true
   },
-  "texto": { "subtitulos": "resaltado", "keywords_tipo": ["cifras", "conceptos"], "reveal": "palabra-a-palabra" },
+  "texto": {
+    "subtitulos": "resaltado",
+    "keywords_tipo": [
+      "cifras",
+      "conceptos"
+    ],
+    "reveal": "palabra-a-palabra"
+  },
   "entrega": {
     "resolucion": "heredar",
     "revision": "local",
     "nomenclatura_proyecto": "AAAAMMDD_nombre-del-video_<cliente|VdL>",
     "ruta_cliente": "clientes/<Cliente>/reels/<proyecto>/",
     "ruta_agencia": "agencia/reels/<proyecto>/",
-    "carpeta_entregable_final": "AF"
+    "carpeta_entregable_final": "AF",
+    "cierre_cortinilla": "obligatorio (ver marca.cierre)"
   },
-  "control": { "revisor": true, "autonomia": "consulta" },
-  "_deps_necesarias": ["ffmpeg", "node", "hyperframes", "groq", "firecrawl", "mediapipe", "opencv", "magnific-mcp"]
+  "control": {
+    "revisor": true,
+    "autonomia": "consulta"
+  },
+  "_deps_necesarias": [
+    "ffmpeg",
+    "node",
+    "hyperframes",
+    "groq",
+    "firecrawl",
+    "mediapipe",
+    "opencv",
+    "magnific-mcp"
+  ]
 }

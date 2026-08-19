@@ -22,6 +22,24 @@ curl -s -X POST https://api.firecrawl.dev/v1/scrape \
 Hyperframes también trae `npx hyperframes capture` para preparar webs para vídeo — úsalo si encaja.
 Coloca la captura en un **marco de navegador** con scroll suave (`smooth`), sincronizada con lo que se dice.
 
+## 1b. Logos de marcas mencionadas (REGLA DURA)
+
+Cuando el guion **nombra una marca** (TikTok, Amazon, Shopify, Meta, Google…), hay que **usar su logo
+REAL** en el reel — nunca un glifo/emoji genérico que la sustituya. Consíguelo como **SVG vectorial o PNG
+con fondo transparente** desde una fuente fiable y guárdalo en `motion/assets/`:
+
+```bash
+# Simple Icons (monocromo, muy limpio; /white para blanco sobre navy)
+curl -sL "https://cdn.simpleicons.org/tiktok/white"  -o motion/assets/tiktok.svg
+# vectorlogo.zone (con color) — OJO: a veces trae el wordmark fuera de lienzo, límpialo
+curl -sL "https://www.vectorlogo.zone/logos/amazon/amazon-icon.svg" -o /tmp/az.svg
+# alternativa: cdn.jsdelivr.net/gh/gilbarbara/logos/logos/<marca>.svg
+```
+- Simple Icons retira algunas marcas grandes (p.ej. Amazon) por trademark → usa otra fuente.
+- **Recolorea** el logo para que contraste sobre navy (blanco, o su color de marca si va sobre caja oscura).
+- Colócalo en la tarjeta/badge de la escena (con su etiqueta de texto al lado para máxima claridad).
+- **Si no consigues un logo limpio, PÍDESELO al usuario** (que lo adjunte a `assets/`). No lo dibujes a mano.
+
 ## 2. Assets propios de VdL / cliente
 
 VdL deja imágenes, clips, capturas o logos en la carpeta **`assets/` del proyecto**. Tómalos de ahí:
@@ -31,7 +49,7 @@ VdL deja imágenes, clips, capturas o logos en la carpeta **`assets/` del proyec
 ## 3. B-roll diseñado (cuando no hay captura ni asset)
 
 Escenas construidas con motion (ver catálogo en `02-motion-graphics.md`): tarjeta de dato con contador,
-terminal en vivo (`typeIn`), diagrama de flujo, rejilla 2×2 con checks, reveal de isotipo. Todas con
+terminal en vivo (`typeIn`), diagrama de flujo, rejilla 2×2 con checks. Todas con
 fondo **liquid animado** de marca + relleno (8-10 elementos, nada de medio frame vacío), cámara en PiP.
 
 ## 4. Imágenes / vídeo generados por IA — MCP `magnific`

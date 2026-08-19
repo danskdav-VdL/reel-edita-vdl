@@ -18,7 +18,8 @@ ESE contenido (evita la fatiga de hacer siempre lo mismo). Tu identidad visual e
 3. **Nada se entrega sin pasar la COMPUERTA DURA y el REVISOR.** `verify-cut.py` exit 0 antes de animar;
    revisor PASS antes de entregar.
 4. **Identidad VdL siempre** (`references/estilo.md`): paleta navy/lime/magenta, **fondo liquid animado**
-   (nunca plano), Sora/Onest, isotipo `<` usado tal cual y **NUNCA como marca de agua**.
+   (nunca plano), Sora/Onest. **El isotipo `<` NO se usa** (salvo que VdL lo pida para ese vídeo) y el
+   reel **SIEMPRE cierra con la cortinilla oficial** (`estilo.md` §8).
 
 ## Entrada y workspace
 
@@ -139,8 +140,9 @@ opacity/x/y/scale/rotation/width/height; `class="clip"`+`data-*`; sin solapes po
 2. Cámara alternando **full-frame / PiP (abajo-dcha) / split arriba-abajo** + escenas B-roll · `02-motion-graphics.md`.
 3. B-roll real (firecrawl) / assets propios / insertos · `references/06-broll.md`.
 4. Subtítulos a nivel del micro (`scripts/captions.py`, palabra-clave en lime `#aae05a`) · `references/07-subtitulos.md`.
-5. Rótulos y texto a nivel del micro; isotipo según `references/estilo.md` (nunca marca de agua).
+5. Rótulos y texto a nivel del micro. **Sin isotipo** (`estilo.md` §4) y **sin el nombre de la marca escrito**.
 6. COLD OPEN como clip separado, antepuesto con `ffmpeg concat` (no dentro del timeline) · `references/08-cold-open.md`.
+7. **CIERRE:** la cortinilla oficial se pega al final en post (no en el timeline) · `estilo.md` §8.
 
 `npx hyperframes validate` + `inspect` a 0 errores, y `python3 scripts/lint-timeline.py motion/index.html`
 sin gaps >4s antes de renderizar.
@@ -151,8 +153,11 @@ sin gaps >4s antes de renderizar.
 2. Render `--quality standard` → QC con frames (ffmpeg) + `hyperframes validate/inspect` (huecos,
    solapes, sincronía, legibilidad) → arreglar.
 3. Mezcla SFX en post (`scripts/mix-sfx.py`).
-4. Render `--quality high` final + re-mezcla SFX → `REEL-<nombre>-FINAL.mp4`. Copia el entregable final
-   a la carpeta **`AF/`** del proyecto (además de dejarlo en `motion/renders/`).
+4. Render `--quality high` final + re-mezcla SFX.
+5. **CIERRE DE MARCA (obligatorio):** pega la cortinilla oficial con disolución cruzada —
+   `bash ~/.claude/skills/reel-edita-vdl/scripts/cierre.sh <reel-montado.mp4> REEL-<nombre>-FINAL.mp4 0.5`
+   (ver `estilo.md` §8). Deja ~0.5-0.8s de cola de silencio para que no pise voz.
+6. Copia el entregable final a la carpeta **`AF/`** del proyecto (además de `motion/renders/`).
 
 ## FASE 5 — REVISOR (subagente independiente, OBLIGATORIO) · `references/05-revisor.md`
 
@@ -167,12 +172,29 @@ y sin blockers.
 - Corte por silencedetect (islands→cut→verify), nunca por timestamps de Whisper.
 - COMPUERTA `verify-cut.py` (exit 0) antes de animar. REVISOR (PASS) antes de entregar.
 - Tratamiento propuesto según el contenido, no molde fijo.
-- **Fondo liquid animado siempre; isotipo tal cual y nunca como marca de agua.**
+- **Fondo liquid animado siempre. SIN isotipo en el vídeo** (salvo petición explícita de VdL) · `estilo.md` §4.
+- **CIERRE OBLIGATORIO: la cortinilla oficial de VdL**, con disolución cruzada (~0.5s), pegada en post con `scripts/cierre.sh`. Siempre la misma, nunca otra ni un endcard a mano · `estilo.md` §8.
 - TEXTO/SUBTÍTULOS/rótulos a NIVEL DEL MICRÓFONO, nunca pegados al borde inferior (la UI tapa el tercio de abajo).
 - **SUBTÍTULOS NUNCA SOBRE EL ROSTRO.** Por debajo de la barbilla (≥~70px), adaptando la posición al
   encuadre de cada tramo; clamp por encima de la franja de UI (~1600px). Ver `references/07-subtitulos.md`.
 - **Cámara FULL cuando no hay B-roll que mostrar** (la persona vuelve a pantalla completa; PiP/split solo con B-roll).
 - **Encuadres: alterna full-frame, PiP y split arriba/abajo** según el tramo (no siempre el mismo). Ver `04-recetas.md`.
+- **SPLIT arriba/abajo (regla de layout, ref. visual VdL):** visual/gráfico en la MITAD SUPERIOR (panel
+  opaco de marca, ~top 0–870px) + la **cámara ampliada en la MITAD INFERIOR mostrando el ROSTRO** (bajar
+  el encuadre con transform `y`+`scale`, no PiP diminuto) + **banda de subtítulo en la costura** (~top 890px,
+  por encima del rostro que va abajo). NO usar PiP pequeño en esquina para el split. Ver `04-recetas.md` R7.
+- **CÁMARA solo por transform (scale/x/y/opacity), NUNCA `top/left/width/height`** (el linter `check` lo
+  bloquea: `gsap_non_transform_motion`). Para ocultar a la persona en un takeover, `opacity:0` de la cámara.
+- **Marcas mencionadas → logo REAL:** cuando en el guion se nombra una marca (TikTok, Amazon, etc.), busca
+  su **logo en internet (SVG vectorial o PNG con fondo transparente)** y úsalo en el reel. Fuentes fiables:
+  `cdn.simpleicons.org/<marca>[/white]`, `vectorlogo.zone`, `cdn.jsdelivr.net/gh/gilbarbara/logos`. Recolorea
+  para que contraste sobre navy. Si no se consigue uno limpio, **pídeselo al usuario** (que lo adjunte). Ver `06-broll.md`.
+- **PROHIBIDO el sujeto semi-transparente detrás del texto** (nada de "fantasma" a ~50% con el vídeo
+  translúcido). Para un rótulo/titular a pantalla: o la persona VISIBLE al 100% con el texto en lower-third,
+  o **ocúltala del todo** (`opacity:0`) y pon detrás **fondo plano / degradado / liquid animado de marca**
+  (nunca el vídeo atenuado del sujeto). Un `flash`/`immediateRender:false` en los `fromTo` para no lavar el arranque.
+- **NUNCA escribir el texto "Valor de Ley" / "VALOR DE LEY" en pantalla** en el cuerpo del reel. La marca
+  aparece SOLO en la cortinilla de cierre (que sí lleva el logotipo oficial, y va tal cual sin retocar).
 - **Emojis al mínimo** (`emoji_level=min` por defecto): iconografía techy/limpia, **nada "playschool"** (ni caritas ni colorines). Ver `estilo.md`.
 - Elementos de B-roll: revelado **sincronizado al audio** con entrada sutil, no todos de golpe (patrón `rev()` en `02-motion-graphics.md`).
 - Si el bruto trae **subtítulos quemados**, tápalos con banda de marca o pide clips limpios (no dobles subtítulos).
@@ -181,7 +203,10 @@ y sin blockers.
 - **Nunca la misma frase repetida seguida, aunque Whisper la fusione** en una palabra larga. La caza el
   check 1b de `verify-cut.py`; remediación = aislar + re-transcribir a 0.7x + última toma (ver `01`).
 - **Si el sujeto no mira a cámara, no sale:** se cubre con visual full-screen (paso gaze en Fase 1.5, verificado en vídeo).
-- **Isotipo = sting** pequeño/rápido en esquina sup-dcha (o entre barbilla y subtítulos), nunca sobre rostro/subtítulos.
+- **Isotipo `<`: NO se pone.** Ni sting, ni esquina, ni endcard, ni marca de agua. Solo si VdL lo pide
+  explícitamente para ese vídeo; entonces nunca sobre el rostro ni sobre los subtítulos.
 - Transiciones cámara↔escena instantáneas (sin crossfade con restos); subtítulos suprimidos durante escenas full-screen.
+- **Zoom-in rápido (`snap`) MÁXIMO 3 veces en todo el reel.** Es un recurso puntual, no un relleno de
+  ritmo. Para los demás beats usa rótulos lower-third, reveals de escena, cambios de encuadre o floats.
 - Que NO parezca hecho por IA: evita clichés (píldoras "EL PROBLEMA/LA SOLUCIÓN", etiquetas-capítulo genéricas).
 - Determinismo Hyperframes: sin `Math.random()`/`Date.now()`; `repeat` finito; timelines `paused`.

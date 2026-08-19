@@ -39,6 +39,11 @@ Cómo posicionarlo bien (hazlo por tramo a cámara / por cada setup de grabació
    cuerpo del subtítulo.
 5. **Durante B-roll (cámara en PiP)** la cara está en la esquina pequeña: el subtítulo centrado no la
    toca, así que la posición de pecho por defecto vale.
+6. 🔴 **En SPLIT arriba/abajo: el subtítulo va EXACTAMENTE en la costura**, es decir **centrado sobre la
+   línea que divide el panel visual (arriba) y el rostro (abajo)** — NO flotando en el hueco por debajo de
+   la línea. Ancla el contenedor de subtítulos del split en el borde inferior del panel y **centra la caja
+   sobre esa línea** (`top:<altura-del-panel>px` + `.cap{transform:translateY(-50%)}`), robusto a 1 o 2
+   líneas. Así la banda queda pegada a la costura, nunca sobre la cara ni suelta en medio.
 
 Expón la posición como variable (p. ej. `CAPS_TOP`) en el generador y ajústala por setup; si el vídeo
 mezcla varios encuadres (como suele pasar con clips sueltos), usa la posición más segura para todos o

@@ -30,7 +30,8 @@ Pon un evento donde haya una entrada/transición/impacto. Los volúmenes ya vien
 - **Cold open:** SIEMPRE `riser` + `boom` (rompe el scroll). Al entrar el cuerpo, `boom` de aterrizaje.
 - **Cortes de escena / cambios de sección:** `whoosh` (impact-landing: `[["whoosh",t-0.4],["boom",t]]`).
 - **Listas / enumeraciones / métricas:** un `tick`/`ding` por CADA ítem (sincronizado a su reveal).
-- **Isotipo sting:** un tick corto. **Endcard:** `boom` + `ding`.
+- **Cierre (cortinilla):** lo pone `scripts/cierre.sh` — `whoosh` en el barrido lime + `ding` al
+  asentar el logotipo. No añadas SFX de endcard a mano ni SFX de isotipo (ya no hay isotipo).
 - Todo **sutil, bajo la voz, sin música**.
 
 **⚠️ Offset del cold open:** el cold open se concatena DELANTE del cuerpo, así que los eventos SFX del
