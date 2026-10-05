@@ -38,15 +38,42 @@ El fondo de marca **NUNCA es un color plano ni un `linear-gradient` recto**. Es 
 animado**: manchas (blobs) de navy → violeta → magenta → lime que se **desplazan y se funden entre sí
 lentamente, en bucle sin costura**, tipo aurora. Movimiento sutil (no debe distraer del contenido).
 
+Es la **única capa ambiente permitida** (`10-motion-vdl.md` §3): no cuenta como el movimiento de la escena,
+que necesita además su propia ruta (revelado, cámara con intención, UI que vive…). En Modo B puede bajar
+de intensidad o cambiar a escenario oscuro con grano si el producto del cliente lo pide (su marca manda
+en su vídeo), pero nunca color plano.
+
+### 2a · Versión 2 (RECOMENDADA desde 2026-10-02): shader de seda — `assets/liquid-vdl.js`
+
+Un campo de flujo en WebGL (domain warp suave + tres familias de cintas tipo aurora con filos de luz finos,
+horizonte violeta abajo, barrido de luz diagonal lento, grano fino estable por frame y lime SOLO en los filos
+más altos). Es función pura del tiempo → determinista y seek-safe. Se pinta a media resolución y el CSS lo
+escala (seda sin coste). Mejor que los 4 blobs en vaivén: nunca se repite, no "late" y tiene profundidad.
+```html
+<script src="liquid.js"></script>   <!-- copia assets/liquid-vdl.js a motion/liquid.js -->
+<canvas id="liquid" style="position:absolute;top:0;left:0;width:1080px;height:1920px;z-index:0"></canvas>
+```
+```js
+const L = liquidVdL(document.getElementById("liquid"), {scale: 0.5});
+const clock = {t: 0};
+tl.to(clock, {t: DUR, duration: DUR, ease: "none", onUpdate: () => L.draw(clock.t)}, 0);
+// L.state = {energy, lime, gx, gy}: energía del flujo, presencia del lime y HALO de interés (0-1, y hacia arriba)
+tl.to(L.state, {gx: .5, gy: .78, duration: 1.2, ease: "power2.inOut"}, 11.9);   // el halo sigue al panel superior
+```
+Probado en el reel de Albarán Digital (2026-10-02): render GPU, 0 errores de `check`.
+
+### 2b · Versión 1 (blobs CSS) — si no hay WebGL
+
 Técnica en Hyperframes (determinista: sin `Math.random()`/`Date.now()`, `repeat` finito, timeline `paused`):
 capa `#bg` navy + 4 blobs con `radial-gradient` y blur pesado, animados con GSAP en yoyo lento.
 
 ```html
 <div id="bg">
-  <span class="blob b-lime"></span>
-  <span class="blob b-magenta"></span>
-  <span class="blob b-violet"></span>
-  <span class="blob b-lilac"></span>
+  <span data-layout-allow-overflow class="blob b-lime"></span>
+  <span data-layout-allow-overflow class="blob b-magenta"></span>
+  <span data-layout-allow-overflow class="blob b-violet"></span>
+  <span data-layout-allow-overflow class="blob b-lilac"></span>
+  <!-- data-layout-allow-overflow: los blobs salen del cuadro A PROPÓSITO; sin él, `check` da ~70 avisos -->
 </div>
 ```
 ```css
@@ -139,7 +166,10 @@ Ni sting en esquina, ni marca de agua, ni endcard, ni dentro de una escena de B-
   ni plano: energía con criterio. Encaja con publicar en **LinkedIn + Reels + TikTok + Shorts**.
 - **Ritmo: medio.** Dinámico pero deja respirar el mensaje (aire en conceptos densos, agilidad en
   ganchos y listas). Regla dura del motor: ningún tramo >4s sin un beat visual.
-- **Audio: solo SFX sutiles, sin música.** SFX bajo la voz (ver `03-sfx-y-qc.md`).
+- **Movimiento: el sistema de `10-motion-vdl.md`** (una familia de curvas, cortes vivos en la corriente
+  izquierda, nada que flote o lata). El "punch" sale de la aceleración y de los cortes, no de flashes.
+- **Audio: solo SFX sutiles, sin música** en reels a cámara (Modo A). En piezas de motion (Modo B):
+  partitura original sintetizada (`03-sfx-y-qc.md` §Música original).
 - **Cold open sí** (ver `08-cold-open.md`).
 - 🔴 **Nunca el sujeto semi-transparente detrás del texto** (look "fantasma"). Para un titular/rótulo a
   pantalla: persona VISIBLE al 100% con texto en lower-third, o persona OCULTA (`opacity:0`) con fondo

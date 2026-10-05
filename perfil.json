@@ -89,7 +89,9 @@
     "velocidad": "media",
     "cold_open": true,
     "musica": "solo-sfx",
-    "sfx": "sutiles"
+    "sfx": "sutiles",
+    "sfx_libreria": "sintéticos + CC0 Kenney (scripts/sfx-kit.sh)",
+    "musica_modo_B": "partitura original sintetizada (plantillas/score-plantilla.py) en rejilla de tempo"
   },
   "broll": {
     "real": true,
@@ -100,7 +102,19 @@
       "carpeta": "assets/ del proyecto"
     },
     "rotulos": "lo-justo",
-    "dataviz": true
+    "dataviz": true,
+    "banco": {
+      "dir": "BROLL_DIR (por defecto ./broll)",
+      "indice": "scripts/broll-index.py",
+      "stock": {
+        "fuentes": [
+          "pixabay",
+          "unsplash"
+        ],
+        "max_pct": 40,
+        "revision_visual": true
+      }
+    }
   },
   "texto": {
     "subtitulos": "resaltado",
@@ -117,7 +131,9 @@
     "ruta_cliente": "clientes/<Cliente>/reels/<proyecto>/",
     "ruta_agencia": "agencia/reels/<proyecto>/",
     "carpeta_entregable_final": "AF",
-    "cierre_cortinilla": "obligatorio (ver marca.cierre)"
+    "cierre_cortinilla": "obligatorio (ver marca.cierre)",
+    "miniatura_frame0": "scripts/poster.sh",
+    "loudness": "-14 LUFS / -1 dBTP (scripts/mux-master.sh)"
   },
   "control": {
     "revisor": true,
@@ -131,6 +147,40 @@
     "firecrawl",
     "mediapipe",
     "opencv",
-    "magnific-mcp"
-  ]
+    "magnific-mcp",
+    "capa de diseño HyperFrames (scripts/setup-capa-diseno.sh)",
+    "numpy + scipy (partitura)"
+  ],
+  "modos": {
+    "A": "reel a cámara (bruto vertical)",
+    "B": "vídeo de proyecto (repo o URL, método /brag)",
+    "A+B": "híbrido persona + producto"
+  },
+  "_deps_opcionales": [
+    "PIXABAY_API_KEY",
+    "UNSPLASH_ACCESS_KEY",
+    "pillow (hoja de contacto de stock)"
+  ],
+  "motion": {
+    "sistema": "references/10-motion-vdl.md",
+    "familia_curvas": {
+      "llega": "power4.out",
+      "se-va": "power4.in",
+      "revela": "expo.out",
+      "recoloca": "nudge curve (power3.in -> none -> power4.out)",
+      "pop": "back.out(1.4) solo chips",
+      "ambiente": "sine.inOut solo fondo liquid"
+    },
+    "corriente": "izquierda",
+    "corte_por_defecto": "cut-the-curve (recorrido ~12%: x 130px / y 230px en vertical)",
+    "idle": "prohibido (flotar, latir, respirar)",
+    "golpes_pantalla_completa_max": 3,
+    "transiciones_por_pieza": "2-3 tipos",
+    "ledger_seam_gate": {
+      "modo_A": "si hay 2+ escenas full-screen seguidas",
+      "modo_B": "obligatorio"
+    },
+    "revision_visual": "references/12-revision-visual.md (todo >= 8 antes del render high)",
+    "catalogo_primero": "references/11-catalogo-y-recetas.md"
+  }
 }

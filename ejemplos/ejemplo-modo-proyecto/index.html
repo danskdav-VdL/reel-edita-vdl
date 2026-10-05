@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face{font-family:'Instrument Serif';font-weight:400;src:url('assets/fonts/instrument-serif-latin-400-normal.woff2') format('woff2')}
+      @font-face{font-family:'Instrument Serif';font-weight:400;font-style:italic;src:url('assets/fonts/instrument-serif-latin-400-italic.woff2') format('woff2')}
+      @font-face{font-family:'Inter Tight';font-weight:500;src:url('assets/fonts/inter-tight-latin-500-normal.woff2') format('woff2')}
+      @font-face{font-family:'Inter Tight';font-weight:600;src:url('assets/fonts/inter-tight-latin-600-normal.woff2') format('woff2')}
+      @font-face{font-family:'JetBrains Mono';font-weight:500;src:url('assets/fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2')}
+      :root{--esp:#3C0604;--tinta:#2A0503;--crema:#F0E7C8;--teja:#E0542E;
+        --serif:'Instrument Serif',Georgia,serif;--sans:'Inter Tight',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+        --app-blue:#1e40af;--app-ink:#171717;--app-muted:#737373;--app-line:#e5e5e5}
+      *{margin:0;padding:0;box-sizing:border-box}
+      html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:var(--esp)}
+      #root{position:relative;width:1080px;height:1920px;overflow:hidden;color:var(--crema);font-family:var(--sans)}
+
+      /* ---------- fondo página ---------- */
+      #bg{position:absolute;inset:0;background:var(--esp);overflow:hidden}
+      #bg .grid{position:absolute;inset:-240px;background-image:linear-gradient(rgba(240,231,200,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(240,231,200,.06) 1px,transparent 1px);background-size:120px 120px}
+      #bg .grain{position:absolute;inset:-200px;background:url(assets/grain.png);opacity:.22;mix-blend-mode:screen}
+
+      /* ---------- tipografía de la casa ---------- */
+      .page{position:absolute;inset:0;padding:0 96px}
+      .folio{position:absolute;top:120px;left:96px;right:96px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:26px;letter-spacing:.06em;color:rgba(240,231,200,.75)}
+      .kicker{font-family:var(--mono);font-weight:500;font-size:30px;color:var(--teja);letter-spacing:.02em}
+      .serif{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;line-height:1.04}
+      .serif em{font-style:italic;color:var(--teja)}
+      .line{display:block}
+      .rule{height:2px;background:var(--crema);opacity:.85;transform-origin:left center}
+      .head{position:absolute;left:96px;right:96px;top:168px}
+      .head .serif{font-size:88px;margin-top:18px}
+
+      /* ---------- móvil ---------- */
+      #phone{position:absolute;left:280px;top:590px;width:520px;height:1000px;border-radius:66px;background:#111;padding:14px;
+        box-shadow:0 60px 120px rgba(0,0,0,.55),0 0 0 2px rgba(240,231,200,.12)}
+      .screen{position:relative;width:492px;height:972px;border-radius:54px;background:#fff;overflow:hidden;color:var(--app-ink);font-family:Arial,Helvetica,sans-serif}
+      .status{height:56px;display:flex;justify-content:space-between;align-items:center;padding:8px 40px 0;font-size:20px;font-weight:700}
+      .bars{display:flex;gap:4px;align-items:flex-end}.bars i{display:block;width:6px;background:var(--app-ink);border-radius:2px}
+      .appbar{height:74px;display:flex;align-items:center;gap:14px;padding:0 28px;border-bottom:1px solid var(--app-line)}
+      .appbar img{width:42px;height:42px;border-radius:10px}.appbar b{font-size:24px}
+      .layer{position:absolute;left:0;right:0;top:130px;bottom:0;padding:26px 28px}
+      h3.t{font-size:38px;font-weight:700}.sub{font-size:22px;color:var(--app-muted);margin-top:4px}
+      .card{border:1.5px solid var(--app-line);border-radius:14px;padding:20px 22px;margin-top:22px}
+      .card h4{font-size:25px;font-weight:700;margin-bottom:12px}
+      .dt{font-size:17px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--app-muted)}
+      .dd{font-size:25px;margin:2px 0 12px}
+      .btn{display:inline-block;background:var(--app-ink);color:#fff;border-radius:10px;padding:16px 26px;font-size:22px;font-weight:700}
+      .btn.ok{background:#047857}
+      .banner{border-radius:12px;padding:16px 18px;font-size:22px;font-weight:700;color:#fff}
+      .row{display:flex;align-items:center;gap:16px;padding:20px 0;border-bottom:1.5px solid var(--app-line);font-size:26px}
+      .row .ico{width:40px;height:40px;border-radius:50%;background:#ecfdf5;color:#047857;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px;flex:none}
+      .row small{display:block;font-size:19px;color:var(--app-muted);margin-top:2px}
+      #cursor{position:absolute;top:0;left:0;width:74px;height:74px;border-radius:50%;border:4px solid var(--app-blue);background:rgba(30,64,175,.15)}
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="24" data-width="1080" data-height="1920">
+
+      <!-- fondo página (todo el vídeo) -->
+      <div id="bg" data-layout-allow-occlusion class="clip" data-start="0" data-duration="24" data-track-index="0">
+        <div class="grid" data-layout-allow-overflow></div><div class="grain" data-layout-allow-overflow></div>
+      </div>
+
+      <!-- 1 · PORTADA -->
+      <div id="s1" class="clip page" data-start="0" data-duration="3.2" data-track-index="1">
+        <div class="folio"><span>TRANSPORTE · OCT 2026</span><span>ALBARÁN DIGITAL</span></div>
+        <div style="position:absolute;left:96px;right:96px;top:560px">
+          <div class="kicker" id="s1k">// deca · transporte</div>
+          <div class="serif" style="font-size:112px;line-height:1.04;margin-top:34px">
+            <span class="line" id="s1a" data-layout-allow-overlap>Desde el 5 de octubre,</span>
+            <span class="line" id="s1b" data-layout-allow-overlap>un camión sin DeCA</span>
+            <span class="line" id="s1c" data-layout-allow-overlap><em>sale ilegalmente.</em></span>
+          </div>
+          <div class="rule" id="s1r" style="margin-top:60px"></div>
+          <div id="s1d" style="margin-top:30px;font-size:38px;opacity:.85">La normativa entra en vigor ya.</div>
+        </div>
+      </div>
+
+      <!-- cabeceras de escena -->
+      <div id="h2" class="clip head" data-start="3.2" data-duration="4" data-track-index="2">
+        <div class="kicker">// lo hemos construido en vdl</div>
+        <div class="serif"><span class="line" data-layout-allow-overlap>Albarán Digital:</span><span class="line" data-layout-allow-overlap><em>el DeCA en el móvil.</em></span></div>
+      </div>
+      <div id="h3" class="clip head" data-start="7.2" data-duration="4.6" data-track-index="2">
+        <div class="kicker">// 01 · antes de salir</div>
+        <div class="serif"><span class="line" data-layout-allow-overlap>Se emite el DeCA.</span><span class="line" data-layout-allow-overlap><em>Con QR para la Inspección.</em></span></div>
+      </div>
+      <div id="h4" class="clip head" data-start="11.8" data-duration="4.6" data-track-index="2">
+        <div class="kicker">// 02 · sin cobertura</div>
+        <div class="serif"><span class="line" data-layout-allow-overlap>Se firma igual.</span><span class="line" data-layout-allow-overlap><em>Sube solo con señal.</em></span></div>
+      </div>
+      <div id="h5" class="clip head" data-start="16.4" data-duration="4" data-track-index="2">
+        <div class="kicker">// 03 · al entregar</div>
+        <div class="serif"><span class="line" data-layout-allow-overlap>Prueba de entrega</span><span class="line" data-layout-allow-overlap><em>con firma, GPS y fotos.</em></span></div>
+      </div>
+
+      <!-- MÓVIL con la UI real del producto (datos ficticios) -->
+      <div id="phone" data-layout-allow-overflow class="clip" data-start="3.2" data-duration="17.2" data-track-index="3">
+        <div class="screen">
+          <div class="status"><span>9:41</span><span class="bars" id="bars"><i style="height:8px"></i><i style="height:12px"></i><i style="height:16px"></i><i style="height:20px"></i></span></div>
+          <div class="appbar"><img src="assets/app-icono.png" alt=""><b>Albarán Digital</b></div>
+
+          <!-- A · orden de servicio -->
+          <div class="layer" id="scrA" data-layout-allow-overlap data-layout-allow-overflow>
+            <h3 class="t">Expedición 2026-0142</h3>
+            <p class="sub">Planificada · 05/10/2026</p>
+            <div class="card" id="cA1"><h4>Orden de servicio</h4>
+              <div class="dt">Origen</div><div class="dd">Pol. Las Mercedes, Madrid</div>
+              <div class="dt">Destino</div><div class="dd">Av. del Puerto 12, Valencia</div>
+              <div class="dt">Cargador</div><div class="dd">Talleres Norte S.L.</div>
+              <div class="dt">Camión</div><div class="dd" style="margin-bottom:0">1234 ABC · remolque R-5678-BCD</div>
+            </div>
+            <div class="card" id="cA2"><h4>Carga</h4>
+              <div class="dd" style="margin:0">Carretilla elevadora · 2.400 kg</div>
+            </div>
+          </div>
+
+          <!-- B · DeCA -->
+          <div class="layer" id="scrB" data-layout-allow-overlap data-layout-allow-overflow>
+            <h3 class="t">Expedición 2026-0142</h3>
+            <p class="sub">Planificada · 05/10/2026</p>
+            <div class="card"><h4>Documento de control (DeCA)</h4>
+              <p style="font-size:19px;color:var(--app-muted);line-height:1.4">Es lo que hay que enseñar en un control de carretera. Vale el PDF o sólo su QR.</p>
+              <div id="btnEmit" class="btn" style="margin-top:22px">Emitir DeCA</div>
+              <div id="qrCard" style="margin-top:22px;display:flex;gap:22px;align-items:center">
+                <img src="assets/qr.svg" alt="" style="width:190px;height:190px">
+                <div><div style="font-size:24px;font-weight:700">DeCA v1</div>
+                  <div style="font-size:19px;color:#047857;font-weight:700;margin-top:6px">✓ Vigente</div>
+                  <div style="font-size:18px;color:var(--app-muted);margin-top:10px;line-height:1.35">PDF con QR<br>para la Inspección</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- C · sin conexión + firma -->
+          <div class="layer" id="scrC" data-layout-allow-overlap data-layout-allow-overflow>
+            <div id="bnOff" data-layout-allow-overlap class="banner" style="background:#b45309">Sin conexión · trabajo guardado</div>
+            <div id="bnOn" data-layout-allow-occlusion class="banner" style="background:#047857;position:absolute;left:28px;right:28px;top:26px">Conectado · todo subido ✓</div>
+            <h3 class="t" style="margin-top:26px">Firmar la entrega</h3>
+            <p class="sub">Expedición 2026-0142</p>
+            <div class="card" style="padding:0;height:300px;position:relative;overflow:hidden">
+              <svg width="436" height="300" viewBox="0 0 436 300" style="position:absolute;inset:0">
+                <path d="M40 200 C 70 120, 95 110, 100 170 S 120 230, 150 160 S 180 90, 190 170 C 195 215, 215 215, 232 170 C 246 130, 262 128, 270 168 C 276 196, 292 200, 306 172 C 322 140, 338 150, 345 175 C 352 196, 372 190, 396 160"
+                  fill="none" stroke="#171717" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="30" y1="240" x2="406" y2="240" stroke="#d4d4d4" stroke-width="2" stroke-dasharray="8 8"/>
+              </svg>
+              <div id="sigCover" style="position:absolute;top:0;bottom:0;left:0;right:0;background:#fff;transform-origin:right center"></div>
+            </div>
+            <div id="saved" style="margin-top:22px;font-size:22px;font-weight:700;color:#047857">✓ Firma guardada en el móvil</div>
+            <div id="queue" style="margin-top:10px;font-size:20px;color:#b45309;font-weight:700">1 cosa por subir</div>
+          </div>
+
+          <!-- D · ePOD -->
+          <div class="layer" id="scrD" data-layout-allow-overlap data-layout-allow-overflow>
+            <h3 class="t">Prueba de entrega</h3>
+            <p class="sub">Expedición 2026-0142 · Entregada</p>
+            <div style="margin-top:18px">
+              <div class="row" id="r1"><span class="ico">✓</span><div>Firma del receptor<small>Con sello de tiempo · 10:42</small></div></div>
+              <div class="row" id="r2"><span class="ico">✓</span><div>Ubicación registrada<small>GPS en el momento de la firma</small></div></div>
+              <div class="row" id="r3"><span class="ico">✓</span><div>3 fotos de la carga<small>Adjuntas a la entrega</small></div></div>
+              <div class="row" id="r4" style="border-bottom:0"><span class="ico">✓</span><div>Enviada al cliente<small>Por correo electrónico</small></div></div>
+            </div>
+          </div>
+
+          <div id="cursor"></div>
+        </div>
+      </div>
+
+      <!-- 6 · REMATE -->
+      <div id="s6" class="clip page" data-start="20.4" data-duration="3.6" data-track-index="1">
+        <div style="position:absolute;left:96px;right:96px;top:600px">
+          <div class="kicker" id="s6k">// en producción</div>
+          <div class="serif" style="font-size:108px;line-height:1.04;margin-top:34px">
+            <span class="line" id="s6a" data-layout-allow-overlap>Hecho en VdL</span>
+            <span class="line" id="s6b" data-layout-allow-overlap>para transportistas.</span>
+            <span class="line" id="s6c" data-layout-allow-overlap><em>Antes del 5 de octubre.</em></span>
+          </div>
+          <div class="rule" id="s6r" style="margin-top:60px"></div>
+          <div id="s6d" style="margin-top:30px;font-family:var(--mono);font-size:28px;opacity:.8">deca · epod · sin cobertura · api</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Las pantallas del móvil se deslizan unas sobre otras dentro de un marco con overflow:hidden:
+      // el comprobador lo lee como texto tapado. Revisado a ojo en los snapshots: es intencionado.
+      document.querySelectorAll("#phone *").forEach((e) => e.setAttribute("data-layout-allow-occlusion", ""));
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const DUR = 24;
+
+      // fondo página: grano a saltos deterministas + deriva lenta de la retícula
+      const P = [[0,0],[-37,21],[18,-44],[-12,-9],[41,33],[-28,47]];
+      for (let i = 0; i * (1/12) < DUR; i++) { const p = P[i % P.length]; tl.set("#bg .grain", { x: p[0], y: p[1] }, i / 12); }
+      tl.fromTo("#bg .grid", { x: 0, y: 0 }, { x: -60, y: -90, duration: DUR, ease: "none" }, 0);
+
+      // estado inicial de capas del móvil
+      tl.set(["#scrB", "#scrC", "#scrD", "#cursor", "#qrCard", "#bnOn", "#saved", "#queue"], { opacity: 0 }, 0);
+      tl.set("#scrB", { x: 492 }, 0); tl.set("#scrC", { x: 492 }, 0); tl.set("#scrD", { x: 492 }, 0);
+
+      // 1 · portada
+      tl.fromTo("#s1k", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 0.05);
+      tl.fromTo("#s1a", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.2);
+      tl.fromTo("#s1b", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.45);
+      tl.fromTo("#s1c", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.75);
+      tl.fromTo("#s1r", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, 1.1);
+      tl.fromTo("#s1d", { opacity: 0 }, { opacity: 0.85, duration: 0.4 }, 1.45);
+
+      // cabeceras: kicker + dos líneas
+      [["#h2", 3.2], ["#h3", 7.2], ["#h4", 11.8], ["#h5", 16.4]].forEach(([h, t]) => {
+        tl.fromTo(h + " .kicker", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, t + 0.05);
+        tl.fromTo(h + " .line:nth-child(1)", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, t + 0.15);
+        tl.fromTo(h + " .line:nth-child(2)", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, t + 0.35);
+      });
+
+      // 2 · entra el móvil
+      tl.fromTo("#phone", { y: 1300 }, { y: 0, duration: 0.75, ease: "power3.out" }, 3.2);
+      tl.fromTo("#cA1", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 3.9);
+      tl.fromTo("#cA2", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 4.3);
+
+      // 3 · DeCA: pasar pantalla, tap, QR
+      tl.to("#scrA", { x: -492, duration: 0.45, ease: "power3.inOut" }, 7.2);
+      tl.set("#scrA", { opacity: 0 }, 7.66);
+      tl.set("#scrB", { opacity: 1 }, 7.2);
+      tl.to("#scrB", { x: 0, duration: 0.45, ease: "power3.inOut" }, 7.2);
+      tl.set("#cursor", { x: 101, y: 382 }, 8.0);
+      tl.fromTo("#cursor", { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, 8.1);
+      tl.to("#cursor", { scale: 0.8, duration: 0.12, ease: "power2.in" }, 8.55);
+      tl.to("#cursor", { scale: 1, opacity: 0, duration: 0.3, ease: "power2.out" }, 8.67);
+      tl.to("#btnEmit", { opacity: 0, duration: 0.15 }, 8.7);
+      tl.fromTo("#qrCard", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.6)" }, 8.85);
+      tl.set("#qrCard", { y: -86 }, 8.85);
+
+      // 4 · sin cobertura: firma, guardado, sincronizado
+      tl.to("#scrB", { x: -492, duration: 0.45, ease: "power3.inOut" }, 11.8);
+      tl.set("#scrB", { opacity: 0 }, 12.26);
+      tl.set("#scrC", { opacity: 1 }, 11.8);
+      tl.to("#scrC", { x: 0, duration: 0.45, ease: "power3.inOut" }, 11.8);
+      tl.to("#bars i", { opacity: 0.2, duration: 0.2, stagger: 0.05 }, 11.9);
+      tl.fromTo("#sigCover", { scaleX: 1 }, { scaleX: 0, duration: 1.3, ease: "power1.inOut" }, 12.6);
+      tl.fromTo("#saved", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3 }, 14.0);
+      tl.fromTo("#queue", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3 }, 14.3);
+      tl.to("#bars i", { opacity: 1, duration: 0.2, stagger: 0.05 }, 15.1);
+      tl.to("#bnOff", { opacity: 0, duration: 0.2 }, 15.3);
+      tl.fromTo("#bnOn", { opacity: 0 }, { opacity: 1, duration: 0.25 }, 15.3);
+      tl.to("#queue", { opacity: 0, duration: 0.2 }, 15.4);
+
+      // 5 · ePOD
+      tl.to("#scrC", { x: -492, duration: 0.45, ease: "power3.inOut" }, 16.4);
+      tl.set("#scrC", { opacity: 0 }, 16.86);
+      tl.set("#scrD", { opacity: 1 }, 16.4);
+      tl.to("#scrD", { x: 0, duration: 0.45, ease: "power3.inOut" }, 16.4);
+      tl.fromTo("#r1", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 16.9);
+      tl.fromTo("#r2", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 17.4);
+      tl.fromTo("#r3", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 17.9);
+      tl.fromTo("#r4", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" }, 18.4);
+      tl.to("#phone", { y: 1300, duration: 0.4, ease: "power3.in" }, 20.0);
+
+      // 6 · remate
+      tl.fromTo("#s6k", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 20.45);
+      tl.fromTo("#s6a", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 20.6);
+      tl.fromTo("#s6b", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 20.85);
+      tl.fromTo("#s6c", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 21.15);
+      tl.fromTo("#s6r", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, 21.5);
+      tl.fromTo("#s6d", { opacity: 0 }, { opacity: 0.8, duration: 0.4 }, 21.85);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

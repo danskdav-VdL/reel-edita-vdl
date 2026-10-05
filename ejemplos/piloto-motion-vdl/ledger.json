@@ -1,0 +1,20 @@
+{
+  "fps": 30,
+  "seams": [
+    {
+      "id": "esc-1→esc-2",
+      "cut": 4.0,
+      "technique": "inverse zoom-through (llegada del payoff)",
+      "blur": 10,
+      "exit": { "selector": "#esc-1", "axis": "z", "dir": -1 },
+      "entry": { "selector": "#esc-2", "axis": "z", "dir": -1 }
+    },
+    {
+      "id": "esc-2→esc-3",
+      "cut": 8.0,
+      "technique": "cut-the-curve LEFT (la corriente)",
+      "exit": { "selector": "#esc-2", "axis": "x", "dir": -1 },
+      "entry": { "selector": "#esc-3", "axis": "x", "dir": -1 }
+    }
+  ]
+}

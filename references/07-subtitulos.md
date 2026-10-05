@@ -64,7 +64,7 @@ divide por tramos.
 2. **Reveal palabra a palabra (por defecto):** dentro de cada beat, las palabras (`.w`) entran con
    **stagger** (una a una), no todas de golpe:
    ```js
-   tl.fromTo(sel+" .w",{opacity:0,y:14},{opacity:1,y:0,duration:0.14,stagger:0.05,ease:"power2.out"},tin);
+   tl.fromTo(sel+" .w",{opacity:0,y:14},{opacity:1,y:0,duration:0.14,stagger:0.05,ease:"power4.out"},tin);
    ```
    La palabra clave se resalta en lime al entrar.
 3. **Supresión durante escenas full-screen:** en los takeover a pantalla completa (y en los rótulos de

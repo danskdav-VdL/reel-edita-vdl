@@ -1,6 +1,10 @@
 > ⚙️ DOC DE MOTOR (universal). Copiado tal cual por forja-reel. Los colores que veas en los
 > ejemplos son PLACEHOLDERS: tu paleta real vive en `references/estilo.md` y sobreescribe el
 > `:root`. No hay estilo de nadie embebido aquí, solo la técnica.
+>
+> 🔴 **El MOVIMIENTO (curvas, duraciones, cortes, qué está prohibido) lo manda `10-motion-vdl.md`.**
+> Este archivo es la mecánica de HyperFrames (capas, cámara, helpers). Si algo de aquí lo contradice,
+> gana `10-motion-vdl.md`.
 
 # Fases 2-3 — Motion graphics (Hyperframes)
 
@@ -18,11 +22,20 @@ cuelgue) · `--example blank` · `--resolution portrait` (1080×1920). Verifica 
 Copia los assets de marca que uses (isotipo, fuentes) a `motion/assets/` y referéncialos **relativos**
 (el render NO resuelve rutas `file://` externas; da error `missing_local_asset`).
 
+**Capa de diseño (skills de HeyGen, instaladas con `scripts/setup-capa-diseno.sh`).** `HYPERFRAMES_SKIP_SKILLS=1`
+solo evita que `init` se cuelgue comprobando versiones; las skills ya están instaladas. Antes de animar,
+carga directamente (sin pasar por la entrevista de `/hyperframes` ni sus workflows: esta skill manda):
+`motion-doctrine` (ley de cortes y movimiento) → `cut-the-curve` (técnicas) → `hyperframes-animation`
+(reglas atómicas y blueprints) → `hyperframes-registry` (catálogo, `11-catalogo-y-recetas.md`). Con cursor:
+`oversized-cursor`. Modo B: también `hyperframes-creative` (dirección de arte) y `hyperframes-core`.
+
 ## Operativa probada (reglas del runtime Hyperframes)
 
-- **Props animables por GSAP:** SOLO `opacity, x, y, scale, scaleX/Y, rotation, width, height`.
-  **NO** uses `clipPath`, `filter`, `top/left`, `borderWidth` (no se renderizan). Para PiP anima la
-  cámara con `scale` + `x/y` (no `top/left`).
+- **Props animables por GSAP:** el linter usa una LISTA NEGRA, no una lista blanca: `filter` (blur),
+  `clipPath` (máscaras, iris, wipes), `strokeDashoffset` (trazos) son válidos (`hyperframes-core`,
+  determinism-rules). Prefiere `transform` + `opacity` por rendimiento. **La cámara, SOLO transform**
+  (`scale`/`x`/`y`/`opacity`): `top/left/width/height` en `#camera` los bloquea `check`
+  (`gsap_non_transform_motion`). Nunca `filter` directamente sobre un `<video>`: sobre su wrapper.
 - **Cada elemento con timing** necesita `class="clip"` + `data-start` + `data-duration` + `data-track-index`
   (z-order por track). El `<video>` es el elemento con timing; **no lo anides** dentro de otro elemento
   con `data-start` (congela el vídeo) — mételo en un wrapper SIN timing y anima el wrapper.
@@ -38,7 +51,7 @@ oculto (`.rv { opacity:0 }`) y revélalos con GSAP **cuando el narrador menciona
 sutil (fade + `y` + `scale`), no un simple corte:
 ```js
 const rev=(sel,t,o={})=>tl.fromTo(sel,{opacity:0,y:(o.y??24),scale:(o.s??0.94)},
-          {opacity:1,y:0,scale:1,duration:(o.d??0.42),ease:(o.e??"power3.out")},t);
+          {opacity:1,y:0,scale:1,duration:(o.d??0.42),ease:(o.e??"power4.out")},t);   // token `llega`
 ```
 Las cifras/keywords (p.ej. un “30-50”, un precio) entran **en el segundo en que se dicen**, no al abrir la escena.
 
@@ -63,7 +76,11 @@ mientras la persona reaparece. Regla:
   **nunca crossfade del contenedor** mientras la cámara aparece.
 - **Resetea los elementos hijos** de la escena al salir (`tl.set(sel+" .rv",{opacity:0},tSalida)`) para
   que no queden "encendidos" si la escena se reutiliza o para evitar frames fantasma.
-- Un `#flash` blanco muy corto (0.05-0.08s) puede enmascarar el corte y darle punch.
+- Para ENTRAR/SALIR de una escena a pantalla completa usa **cut-the-curve en la corriente** (izquierda):
+  la escena sale acelerando ~12 % hacia la izquierda y lo siguiente entra ya lanzado desde la derecha
+  (`10-motion-vdl.md` §4). Con 2+ escenas full-screen encadenadas, ledger + `seam-stamp` + gate (§5).
+- Un `#flash` blanco corto (0.05-0.08s) cuenta como **golpe de pantalla completa**: ≤ 3 por pieza, solo en
+  los momentos más fuertes. No es la forma por defecto de "dar punch" a un corte.
 
 ## Isotipo VdL — 🔴 NO se anima (no se pone)
 
@@ -94,14 +111,14 @@ o pide clips limpios. Detecta esto mirando frames del corte antes de montar.
 
 Reescribe `motion/index.html` en vertical: root `data-width="1080" data-height="1920"`, `data-duration` = duración del corte.
 
-Antes de escribir, lee (una vez) la skill `hyperframes`: `house-style.md` y `references/video-composition.md` (reglas de vídeo que pisan los instintos de web: llenar el frame, escalas grandes, color presente, movimiento constante).
+Antes de escribir, lee (una vez) de la skill `hyperframes-creative`: `references/house-style.md` y `references/video-composition.md` (reglas de vídeo que pisan los instintos de web: llenar el frame, escalas grandes, color presente). Ojo: donde digan "movimiento constante", léelo como las rutas de `10-motion-vdl.md` §3 (nada idle).
 
 ## Sistema de capas (z-index)
 
 - `#broll` (z:2): escenas B-roll a pantalla completa, `opacity:0` por defecto.
 - `#camera` (z:5): el vídeo. **Va POR ENCIMA del B-roll.**
-- `#orbs` (z:9): glows ambientales que laten.
-- `#ov` (z:10): overlays (tags, chips, stickers).
+- `#ov` (z:10): overlays (rótulos, chips, datos). (Ya no hay `#orbs` que laten ni stickers: movimiento
+  idle prohibido, `10-motion-vdl.md` §3.)
 - `#br_teaser` (z:13) y `#flash` (z:14): hook y destellos de transición.
 
 ⚠️ **Gotcha crítico:** el B-roll está DEBAJO de la cámara. Si la cámara está a pantalla completa, **tapa el B-roll**. Para que un B-roll se vea, la cámara DEBE estar en PiP (esquina). Cada escena B-roll va acompañada de `camPiP()`. (Un diagrama pensado como "overlay full-frame" no se verá si la cámara sigue full.)
@@ -113,33 +130,27 @@ esas props se redondean a píxel entero y tiemblan en la captura frame-a-frame).
 `scale` / `x` / `y` / `opacity`**. (El ejemplo de abajo con layout es HISTÓRICO — NO lo uses.)
 
 ```js
-function camFull(t){ tl.to("#camera",{scale:1,x:0,y:0,opacity:1,duration:0.42,ease:"power3.inOut"},t); }
-function camPiP(t){  tl.to("#camera",{scale:0.40,x:284,y:470,duration:0.5,ease:"power3.inOut"},t); }   // esquina
-function camSplit(t){tl.to("#camera",{scale:1.12,x:0,y:900,duration:0.5,ease:"power3.inOut"},t); }      // rostro abajo (R7)
-function camHide(t){ tl.to("#camera",{opacity:0,duration:0.28},t); }  // ocultar en takeover (nunca fantasma)
+// Reencuadres con la NUDGE CURVE de 10-motion-vdl.md §3 (arranque suave → tramo rápido → cola larga):
+// se nota el movimiento, no "frena de golpe" como power3.inOut. Lleva el estado actual en CAM.
+const CAM = {scale:1, x:0, y:0};
+function camTo(t, to, d=0.8){
+  for (const p of ["scale","x","y"]) if (to[p] !== CAM[p]) nudge("#camera", p, CAM[p], to[p], t, d);
+  Object.assign(CAM, to);
+}
+const camFull  = t => camTo(t, {scale:1,    x:0,   y:0});
+const camPiP   = t => camTo(t, {scale:0.40, x:284, y:470});   // esquina abajo-dcha
+const camSplit = t => camTo(t, {scale:1.12, x:0,   y:900});   // rostro abajo (R7)
+function camHide(t){ tl.set("#camera",{opacity:0},t); }        // takeover: corte limpio (nunca fantasma)
+function camShow(t){ tl.set("#camera",{opacity:1},t); }
 ```
+(`nudge()` está en `10-motion-vdl.md` §3; cópialo al script de la composición.)
 El zoom interno (push-in/`snap`) va en el wrapper hijo `#vidzoom` con `transform: scale` (máx. 3 snaps/reel).
 `flash`/reveals con `fromTo` → usa **`immediateRender:false`** (si no, el estado `from` se aplica en t=0 y
 p.ej. un `#flash` blanco lava de blanco todo el arranque).
 
-### (histórico — NO usar) animar layout
-Para el PiP con borde nítido, ~~anima `width/height/top/left/borderWidth/borderRadius`~~. Ya no: el render lo rechaza.
-
-```css
-#camera { position:absolute; top:0; left:0; width:1080px; height:1920px;
-  border:0 solid var(--violet); border-radius:0; overflow:hidden; z-index:5;
-  box-shadow:0 28px 80px rgba(0,0,0,.6); }   /* sombra invisible a full-frame, visible en PiP */
-#camera video { width:100%; height:100%; object-fit:cover; }
-#vidzoom { width:100%; height:100%; transform-origin:50% 42%; }
-```
-```js
-function camPiP(t){ tl.to("#camera",{top:1120,left:606,width:430,height:764,borderWidth:5,borderRadius:36,duration:0.5,ease:"power3.inOut"},t); }
-function camFull(t){ tl.to("#camera",{top:0,left:0,width:1080,height:1920,borderWidth:0,borderRadius:0,y:0,duration:0.42,ease:"power3.inOut"},t); }
-function floatPiP(t,dur){ tl.to("#camera",{y:"+=16",duration:1.7,yoyo:true,repeat:Math.max(1,Math.round(dur/1.7)),ease:"sine.inOut"},t); } // deriva suave del PiP
-```
 Snap-zoom en palabras clave (en tramos full-frame), sobre `#vidzoom`, sin solaparse en el tiempo:
 ```js
-function snap(t){ tl.to("#vidzoom",{scale:1.08,duration:0.18,ease:"power3.out"},t); tl.to("#vidzoom",{scale:1.0,duration:0.34,ease:"power2.inOut"},t+0.2); }
+function snap(t){ tl.to("#vidzoom",{scale:1.08,duration:0.16,ease:"power4.out"},t); tl.to("#vidzoom",{scale:1.0,duration:0.5,ease:"power4.out"},t+0.36); }
 ```
 **El track de escala de `#vidzoom` es uno solo**: ordena reveal/push/snap por tiempo y que NO se solapen (dos tweens sobre `scale` a la vez = conflicto). Durante PiP, deja `#vidzoom` en 1.0.
 
@@ -162,16 +173,21 @@ function snap(t){ tl.to("#vidzoom",{scale:1.08,duration:0.18,ease:"power3.out"},
 Envuelve cada palabra en `<span class="w">` y la clave en `<span class="w em v">PALABRA<span class="ul"></span></span>` (subrayado animado). El chip entra como caja + las palabras en stagger + el subrayado barre:
 ```js
 function kpop(sel,tin,tout,opt={}){
-  tl.fromTo(sel,{opacity:0,y:opt.fromY??52,scale:opt.fromScale??0.92},{opacity:1,y:0,scale:1,duration:0.32,ease:opt.ein??"back.out(1.7)"},tin);
-  tl.fromTo(sel+" .w",{opacity:0,y:16},{opacity:1,y:0,duration:0.2,stagger:0.05,ease:"power2.out"},tin+0.07);
-  tl.fromTo(sel+" .ul",{scaleX:0},{scaleX:1,duration:0.3,ease:"power3.out"},tin+0.3);
-  tl.to(sel,{opacity:0,y:-26,scale:0.97,duration:0.26,ease:"power2.in"},tout);
+  tl.fromTo(sel,{opacity:0,y:opt.fromY??52,scale:opt.fromScale??0.94},{opacity:1,y:0,scale:1,duration:0.34,ease:opt.ein??"back.out(1.4)"},tin); // `pop` (chip)
+  tl.fromTo(sel+" .w",{opacity:0,y:16},{opacity:1,y:0,duration:0.18,stagger:0.06,ease:"power4.out"},tin+0.07);         // `llega`
+  tl.fromTo(sel+" .ul",{scaleX:0},{scaleX:1,duration:0.3,ease:"power4.out"},tin+0.3);
+  tl.to(sel,{opacity:0,y:-26,scale:0.97,duration:0.26,ease:"power4.in"},tout);                                           // `se-va`
 }
 ```
 
 ## Helpers de motion ampliados (v10 — vocabulario extendido)
 
 Todos estos helpers son deterministas, GPU-safe (`transform`/`opacity`/`filter`/`clip-path`) y están pensados para 1080×1920 con rótulos a la altura del micro.
+
+> ⚠️ Son anteriores al sistema de `10-motion-vdl.md`. Úsalos con sus curvas de la familia VdL y con cupo:
+> **`flashCut`, `shake` y `burstLines` cuentan como golpes de pantalla completa (≤ 3 por pieza en total)**;
+> `burstLines` (ráfaga) solo en UN momento elegido. Antes de usar uno, mira si el catálogo tiene algo
+> mejor (`11-catalogo-y-recetas.md`).
 
 ### `wipe(sel, tin, tout)`
 Revela un rótulo con máscara izquierda→derecha y barra de luz; úsalo para claims, titulares y nombres de herramienta.
@@ -185,9 +201,9 @@ Markup opcional para la barra:
 function wipe(sel, tin, tout){
   // técnica inspirada en OpenMontage wipe, reescrita
   tl.set(sel,{opacity:1,clipPath:"inset(0 100% 0 0)"},tin);
-  tl.to(sel,{clipPath:"inset(0 0% 0 0)",duration:0.42,ease:"power3.out"},tin);
-  tl.fromTo(sel+" .sweep",{x:"-120%",opacity:0.95},{x:"120%",opacity:0,duration:0.42,ease:"power3.out"},tin);
-  tl.to(sel,{opacity:0,duration:0.24,ease:"power2.in"},tout);
+  tl.to(sel,{clipPath:"inset(0 0% 0 0)",duration:0.42,ease:"power4.out"},tin);
+  tl.fromTo(sel+" .sweep",{x:"-120%",opacity:0.95},{x:"120%",opacity:0,duration:0.42,ease:"power4.out"},tin);
+  tl.to(sel,{opacity:0,duration:0.24,ease:"power4.in"},tout);
 }
 ```
 
@@ -294,7 +310,7 @@ function slotReveal(sel, t, value, opt={}){
   const nodes = gsap.utils.toArray(sel+" .digit");
   const spins = opt.spins ?? 18;
   const proxy = {p:0};
-  tl.to(proxy,{p:1,duration:opt.duration ?? 0.6,ease:"power3.out",onUpdate:()=>{
+  tl.to(proxy,{p:1,duration:opt.duration ?? 0.6,ease:"power4.out",onUpdate:()=>{
     nodes.forEach((node,i)=>{
       const finalChar = chars[i] ?? "";
       const lockAt = 0.62 + i*0.06;
@@ -306,7 +322,7 @@ function slotReveal(sel, t, value, opt={}){
     });
   }},t);
   nodes.forEach((node,i)=>tl.fromTo(node,{scale:1},{scale:1.12,duration:0.08,yoyo:true,repeat:1,ease:"power2.out"},t+0.48+i*0.04));
-  tl.fromTo(sel+" .underline",{scaleX:0,opacity:0.9},{scaleX:1,opacity:1,duration:0.28,ease:"power3.out"},t+0.48);
+  tl.fromTo(sel+" .underline",{scaleX:0,opacity:0.9},{scaleX:1,opacity:1,duration:0.28,ease:"power4.out"},t+0.48);
 }
 ```
 
@@ -316,8 +332,8 @@ Entrada/salida blur-resolve tipo focus pull; úsalo en rótulos sobrios, citas y
 ```js
 function focusIn(sel, tin, tout){
   // técnica inspirada en OpenMontage blur-resolve, reescrita
-  tl.fromTo(sel,{filter:"blur(18px)",opacity:0,scale:1.06},{filter:"blur(0px)",opacity:1,scale:1,duration:0.4,ease:"power2.out"},tin);
-  tl.to(sel,{filter:"blur(12px)",opacity:0,duration:0.3,ease:"power2.in"},tout);
+  tl.fromTo(sel,{filter:"blur(18px)",opacity:0,scale:1.06},{filter:"blur(0px)",opacity:1,scale:1,duration:0.4,ease:"power4.out"},tin);
+  tl.to(sel,{filter:"blur(12px)",opacity:0,duration:0.3,ease:"power4.in"},tout);
 }
 ```
 
@@ -338,7 +354,7 @@ Markup requerido:
 ```js
 function fillWord(sel, tin){
   // técnica inspirada en OpenMontage outline-to-fill, reescrita
-  tl.fromTo(sel+" .fill",{clipPath:"inset(100% 0 0 0)"},{clipPath:"inset(0% 0 0 0)",duration:0.5,ease:"power3.out"},tin);
+  tl.fromTo(sel+" .fill",{clipPath:"inset(100% 0 0 0)"},{clipPath:"inset(0% 0 0 0)",duration:0.5,ease:"power4.out"},tin);
 }
 ```
 
@@ -361,31 +377,30 @@ function iris(t, dir, opt={}){
 }
 ```
 
-## Vocabulario de easings canónico (coherencia entre reels)
+## Vocabulario de easings
 
-No inventes curvas nuevas por reel; elige de esta paleta. Es el equivalente al diccionario de easings de ReelStack.
-
-| Intención | GSAP ease | Duración típica | Uso |
-|---|---|---|---|
-| `snappy` | `back.out(1.7)` | 0.30-0.40s | entradas de chip/rótulo/sello con punch |
-| `gentle` | `power2.out` | 0.30-0.50s | fades de escena, apariciones suaves |
-| `bouncy` | `back.out(2.4)` | 0.30-0.45s | stickers/badges juguetones, números clavados |
-| `glass` | `power3.inOut` | 0.42-0.50s | movimientos de cámara (PiP↔full), transiciones premium |
-| `smooth` | `sine.inOut` | 1.5-3.0s | push-ins/scroll lentos de B-roll, floats |
-| salida | `power2.in` | 0.26-0.30s | salidas de elementos (fade/blur out) |
+Ya no vive aquí: usa SOLO los tokens de `10-motion-vdl.md` §2 (`llega` power4.out · `se-va` power4.in ·
+`revela` expo.out · `costura` estampada · `recoloca` nudge curve · `pop` back.out(1.4) solo chips ·
+`ambiente` sine solo el fondo). `bouncy`/`back.out(2.4)` y los floats `sine` sobre contenido quedan prohibidos.
 
 ## Hook (0-3s) — lo más importante
 
 Los 3 primeros segundos deciden el scroll. Movimiento inmediato. Patrón validado: **teaser del dato más bestia a pantalla completa que estalla y revela la cara**:
-- `#br_teaser` (z:13) full-frame con el dato gigante (ej. "100.000 ⭐ / ¿en una semana?") que entra con slam (`scale 1.32→1` en 0.16s) + glitch-shake (`x` yoyo) + la pregunta en pop.
-- A ~0.8s estalla: `scale→1.5, opacity→0, filter:blur(22px)` + `flash()`, y la cámara se revela con zoom-out (`#vidzoom` `scale 1.3→1.0`).
+- `#br_teaser` (z:13) full-frame con el dato gigante (ej. "100.000 ⭐ / ¿en una semana?") que LLEGA en Z
+  (`revela`: `scale 1.25→1`, `blur 10→0`, `expo.out` 0.5s) y la pregunta en `pop`.
+- A ~1.2-1.5s (que se haya podido leer) **corte en Z con el signo casado** (inverse zoom-through): el dato
+  se ALEJA (`scale 1→0.8`, `blur 0→10`, opacidad lineal, `power3.in` 0.2s) y la cámara llega también
+  alejándose (`#vidzoom` `scale 1.25→1.0`, `expo.out` 0.5s). ❌ Nunca "el dato crece hacia cámara y la cara
+  entra encogiendo" (vector invertido: el error nº 1 de la doctrina). Sin glitch-shake.
 Alternativas si encaja mejor: slam tipográfico palabra-a-palabra, o micro-tráiler de 0.8s con flashes de las mejores escenas. Decide con VdL si dudas.
 
 ## B-roll diseñado (catálogo, adáptalo al contenido)
 
-Cada uno full-frame con `scene-bg`+`grid`, **relleno** (8-10 elementos; nada de medio frame vacío — añade ghost glyph gigante a baja opacidad, tokens mono de fondo, métricas), y la cámara en PiP. Ejemplos usados:
+Cada uno full-frame con fondo de marca y **un héroe + 1-2 apoyos** (`10-motion-vdl.md` §6): nada de
+relleno decorativo (ghost glyphs, tokens de fondo, métricas inventadas). Si el plano se ve vacío, falta
+historia (revela por fases, mueve la cámara con intención), no decoración. Cámara en PiP o fuera. Ejemplos usados:
 - **Tarjeta de repo/dato**: card con contador animado (count-up vía proxy `{v:0}`→objetivo + `onUpdate` `toLocaleString('es-ES')`), badge, barras `scaleY`, pills.
-- **Chat de IA que falla**: burbujas (user/bot), puntos de "escribiendo", ventana de app que glitchea en rojo (errores tipo `TypeError`, `build failed`, 💩). Buen recurso para el "problema".
+- **Chat de IA que falla**: burbujas (user/bot), puntos de "escribiendo", ventana de app que glitchea en rojo (errores tipo `TypeError`, `build failed`). Buen recurso para el "problema".
 - **Terminal en vivo**: ventana `spec-kit — zsh` que va escribiendo comandos uno a uno (cada línea entra con slide + check verde + tick SFX, cursor que parpadea con `repeat` finito). Pieza central para enumeraciones/pasos.
 - **Reveal/sting**: logo gigante + kicker + badges.
 - **Diagrama de flujo**: nodos + flecha (A → B).
@@ -403,9 +418,34 @@ El corte de audio está pegado sin pausas, pero las **escenas/B-roll no tienen p
 
 ## Transiciones y ambiente
 
-- `flash()` (overlay blanco que parpadea 0.05s) en los cortes fuertes; glitch (shake `x` de `#camera`) al entrar a una escena tipo "error".
-- Orbs (`#orbs`): 2 glows en esquinas que laten (`scale`/`opacity` yoyo, `repeat` finito que cubra la duración).
-- Stickers (👀🔥🥄): pop+bounce cerca del chip, a la altura del micro.
+- Corte por defecto: **cut-the-curve en la corriente** (izquierda), 2-3 tipos de transición por pieza.
+- `flash()` / glitch-shake: **solo** dentro del cupo de ≤ 3 golpes de pantalla completa (p. ej. UNA escena
+  tipo "error"). Nunca como puntuación de cada corte.
+- ❌ Orbs que laten, stickers (👀🔥🥄), floats: prohibidos (movimiento idle / look playschool).
+- El ambiente lo da el fondo liquid de marca; la vida de cada escena, una ruta de `10-motion-vdl.md` §3.
+
+## Check — gate unificado de Hyperframes (0.8.x)
+
+```bash
+npx hyperframes check motion --at-transitions \
+  --caption-zone "x0=0;y0=.84;x1=1;y1=1;severity=error"   # franja de UI de Reels/TikTok: nada de texto ahí
+npx hyperframes snapshot motion --at 1.8,5.5,9.8           # PNG + contact-sheet.jpg para revisar con Read
+```
+Se **suma** a `validate` + `inspect` + `lint-timeline.py` (no los sustituye).
+
+**Gotchas reales:**
+- **Capas que salen de cuadro** siguen "visibles" para el comprobador → falsos errores de contraste.
+  Solución: `tl.set(capa, {opacity:0}, fin_de_transición)`.
+- **Mockups con `overflow:hidden`** (móvil con pantallas que se deslizan dentro) → `text_occluded` falso. El
+  opt-out solo vale en el propio elemento de texto, no se hereda:
+  `document.querySelectorAll("#phone *").forEach(e=>e.setAttribute("data-layout-allow-occlusion",""))`
+  (solo tras verificar a ojo con `snapshot`).
+- **Titulares con interlineado ≤1.0** → `content_overlap`. Sube a ~1.04 o marca la línea con `data-layout-allow-overlap`.
+- **Elementos absolutos sin `top/left`** caen en su posición estática. Siempre `top:0;left:0` y mover con `x/y`.
+- Excepciones que reconoce el auditor: `data-layout-allow-occlusion`, `-allow-overlap`, `-allow-overflow`,
+  `-allow-caption-zone`, `-ignore`.
+- Otras utilidades: `media-treatment` (etalonaje determinista), `normalize-audio` (LUFS), `capture` (web para
+  vídeo), `remove-background` (recorte de persona, ver R8). Telemetría anónima: `npx hyperframes telemetry disable`.
 
 ## Reglas Hyperframes (no negociables)
 

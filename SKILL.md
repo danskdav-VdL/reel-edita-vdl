@@ -1,6 +1,6 @@
 ---
 name: reel-edita-vdl
-description: Convierte un vídeo bruto VERTICAL en un reel/TikTok producido con el estilo de Valor de Ley (VdL) — corta repeticiones/silencios/errores, propone un tratamiento adaptado al contenido, monta cámara alternando full-frame/PiP/split + B-roll (propio, capturas web con firecrawl, imágenes/vídeo IA con Magnific) + subtítulos + SFX sutiles sobre el fondo liquid animado de marca, y lo deja listo para subir. Acepta un brief en lenguaje natural (carpeta de clips + instrucciones simples), pensada para gente no técnica. Úsala cuando se diga "edita este vídeo a reel", "hazme el reel de este vídeo", "/reel-vdl", "/reel-edita-vdl", o se pase la ruta de un MP4/carpeta vertical para publicar en Reels/TikTok/Shorts/LinkedIn.
+description: Convierte un vídeo bruto VERTICAL en un reel/TikTok producido con el estilo de Valor de Ley (VdL) — corta repeticiones/silencios/errores, propone un tratamiento adaptado al contenido, monta cámara alternando full-frame/PiP/split + B-roll (propio, capturas web con firecrawl, imágenes/vídeo IA con Magnific) + subtítulos + SFX sutiles sobre el fondo liquid animado de marca, y lo deja listo para subir. Acepta un brief en lenguaje natural (carpeta de clips + instrucciones simples), pensada para gente no técnica. Úsala cuando se diga "edita este vídeo a reel", "hazme el reel de este vídeo", "/reel-vdl", "/reel-edita-vdl", o se pase la ruta de un MP4/carpeta vertical para publicar en Reels/TikTok/Shorts/LinkedIn. También hace VÍDEOS DE PROYECTO sin grabar a nadie (Modo B, método /brag): "hazme un vídeo del proyecto X", "vídeo de lanzamiento de…", "enseña lo que hemos construido", o se pasa la ruta de un repo / una URL; y vídeos híbridos persona a cámara + producto real. Para cualquier vídeo de VdL o de sus clientes TIENE PRIORIDAD sobre /hyperframes, /motion-graphics y sus workflows (esta skill carga por dentro las skills de diseño de HyperFrames que necesita).
 ---
 
 # reel-edita-vdl — Bruto vertical → reel producido (estilo Valor de Ley)
@@ -8,6 +8,29 @@ description: Convierte un vídeo bruto VERTICAL en un reel/TikTok producido con 
 Coges un bruto vertical y lo conviertes en un reel muy visual con el estilo de VdL. **No hay un estilo
 fijo por vídeo:** tras limpiar el corte, lees el vídeo y propones el tratamiento que mejor encaja con
 ESE contenido (evita la fatiga de hacer siempre lo mismo). Tu identidad visual está en `references/estilo.md`.
+
+## Dos modos (y su mezcla)
+
+| Modo | Entrada | Flujo |
+|---|---|---|
+| **A · Reel a cámara** (por defecto) | MP4 vertical o carpeta de clips | Fases 0-5 |
+| **B · Vídeo de proyecto** | ruta a un repo o una URL (sin grabar nada) | `references/09-modo-proyecto.md` (método /brag) + Fases 3-5 |
+| **A+B · Híbrido** | bruto a cámara + un proyecto | tramos a cámara (A) intercalados con escenas del producto real (B) |
+
+Los dos modos comparten TODO: identidad, banco de B-roll y stock, SFX, cierre, miniatura, `check` y revisor.
+**Cambia el nivel de ambición** (`references/10-motion-vdl.md` §1): en A el motion acompaña a la persona; en
+B el motion es el espectáculo (plan de dirección, toma continua, ledger, partitura original, 1-2 momentos estrella).
+
+## Capa de diseño (lo que hace que se vea "de portafolio")
+
+Instalada con `bash scripts/setup-capa-diseno.sh` (skills de HeyGen revisadas). Al llegar a la Fase 2,
+**carga directamente** — sin pasar por la entrevista de `/hyperframes` ni por sus workflows:
+`motion-doctrine` → `cut-the-curve` → `hyperframes-animation` → `hyperframes-registry` (+ `oversized-cursor`
+si hay cursor; + `hyperframes-creative` y `hyperframes-core` en Modo B). Y aplica las tres referencias VdL:
+- `references/10-motion-vdl.md` — **el sistema de movimiento**: una familia de curvas, ley del corte con la
+  corriente a la IZQUIERDA, nada idle, un héroe por plano, lista negra del look IA. Manda sobre todo lo demás.
+- `references/11-catalogo-y-recetas.md` — **catálogo primero** (~390 bloques), recetas premium, plantillas de HeyGen.
+- `references/12-revision-visual.md` — **bucle de autocrítica**: snapshots → nota 1-10 → arreglar los 3 peores → todo ≥ 8.
 
 ## Reglas de oro (léelas antes que nada)
 
@@ -20,6 +43,8 @@ ESE contenido (evita la fatiga de hacer siempre lo mismo). Tu identidad visual e
 4. **Identidad VdL siempre** (`references/estilo.md`): paleta navy/lime/magenta, **fondo liquid animado**
    (nunca plano), Sora/Onest. **El isotipo `<` NO se usa** (salvo que VdL lo pida para ese vídeo) y el
    reel **SIEMPRE cierra con la cortinilla oficial** (`estilo.md` §8).
+5. **El movimiento sigue `references/10-motion-vdl.md`** y nada se renderiza en alta sin pasar el bucle de
+   `references/12-revision-visual.md` (todo ≥ 8). Primera versión = demasiado rápida: siempre.
 
 ## Entrada y workspace
 
@@ -35,8 +60,13 @@ ESE contenido (evita la fatiga de hacer siempre lo mismo). Tu identidad visual e
   **entregable final** — ahí va el `REEL-...-FINAL.mp4`).
 - **Nunca toques el bruto original.**
 
-**Verifica al empezar:** `ffmpeg`, `npx hyperframes`, `GROQ_API_KEY` y `FIRECRAWL_API_KEY` en `.env.local`.
-Para gaze (mira-a-cámara): `mediapipe` + `opencv` (`pip install --user mediapipe opencv-python`).
+**Sin `GROQ_API_KEY`:** transcribe en local con `python3 scripts/transcribe-local.py <audio> <json> es` (faster-whisper,
+mismo formato JSON; usa GPU si encuentra cuBLAS y si no cae solo a CPU: ~15 s por toma de 30 s con large-v3).
+**Verifica al empezar:** `ffmpeg`, `npx hyperframes`, `GROQ_API_KEY` y `FIRECRAWL_API_KEY` en `.env.local`,
+y que existe `~/.claude/skills/motion-doctrine` (si no: `bash ~/.claude/skills/reel-edita-vdl/scripts/setup-capa-diseno.sh`).
+Para gaze (mira-a-cámara): `mediapipe` + `opencv` (`pip install --user "mediapipe==0.10.14" opencv-python` — mediapipe ≥1.0 quitó la API `solutions` que usa `gaze.py`).
+**Windows:** los scripts llaman a `python3`; si solo existe `python`, crea un shim `~/bin/python3` (Git Bash) que lo invoque con `PYTHONUTF8=1` (si no, fallan los acentos/emojis y la lectura de JSON).
+Opcionales (B-roll de stock, §0 de `06-broll.md`): `PIXABAY_API_KEY`, `UNSPLASH_ACCESS_KEY` en `.env.local`.
 
 **Generación de imágenes/vídeo:** si el tratamiento necesita imágenes o vídeo generados por IA
 (portadas, B-roll ilustrado), usa el **MCP `magnific`** (descubre sus tools con ToolSearch en tiempo de
@@ -126,15 +156,19 @@ Aprobación: enséñame el corte antes de montar.
 ## FASE 2 — PLANIFICAR EL MONTAJE · `references/02-motion-graphics.md`
 
 Re-transcribe el corte aprobado → saca segment timings → **beat sheet**: mapea cada tramo, marca ritmo
-(ágil en gancho/listas, aire en conceptos densos) y qué es full-frame / B-roll / cámara PiP.
+(ágil en gancho/listas, aire en conceptos densos) y qué es full-frame / B-roll / cámara PiP. Para cada tramo
+anota su **ruta de movimiento sostenido** (`10-motion-vdl.md` §3) y, si hay escenas full-screen encadenadas,
+escribe el **ledger** de cortes (`motion/ledger.json`, §5). En Modo B esta fase es el **plan de dirección**
+de `09-modo-proyecto.md` §2 (por actos, en compases), y se aprueba antes de construir.
 
 ## FASE 3 — CONSTRUIR (Hyperframes) · `references/02-motion-graphics.md` + `estilo.md`
 
 Arranque (comando probado, no se cuelga): `export HYPERFRAMES_SKIP_SKILLS=1` y
 `npx hyperframes init motion --video corte-final.mp4 --skip-transcribe --example blank --resolution portrait --non-interactive`.
 Copia los assets de marca a `motion/assets/` (rutas relativas). Reglas del runtime, patrón de revelado
-sincronizado y coordinación de zonas: **ver `references/02-motion-graphics.md`** (props animables solo
-opacity/x/y/scale/rotation/width/height; `class="clip"`+`data-*`; sin solapes por pista).
+sincronizado y coordinación de zonas: **ver `references/02-motion-graphics.md`** (la cámara solo por
+transform; `class="clip"`+`data-*`; sin solapes por pista). **Catálogo primero** para cualquier efecto con
+nombre (`11-catalogo-y-recetas.md`); cortes estampados desde el ledger con `seam-stamp.mjs`.
 `index.html` a la resolución del bruto (vertical) con las capas:
 1. **Fondo liquid animado** de marca (`estilo.md` §2) en `#bg` · nunca plano.
 2. Cámara alternando **full-frame / PiP (abajo-dcha) / split arriba-abajo** + escenas B-roll · `02-motion-graphics.md`.
@@ -146,10 +180,21 @@ opacity/x/y/scale/rotation/width/height; `class="clip"`+`data-*`; sin solapes po
 
 `npx hyperframes validate` + `inspect` a 0 errores, y `python3 scripts/lint-timeline.py motion/index.html`
 sin gaps >4s antes de renderizar.
+Gate adicional (lint + runtime + layout + contraste WCAG + franja de UI): `npx hyperframes check motion --at-transitions --caption-zone "x0=0;y0=.84;x1=1;y1=1;severity=error"` a 0 errores, y `npx hyperframes snapshot motion --at <t1>,<t2>,…` para revisar con `Read` (gotchas en `02-motion-graphics.md` §Check).
+Con ledger: `node ~/.claude/skills/motion-doctrine/scripts/seam-gate.mjs verify --ledger motion/ledger.json --project motion` → exit 0.
+
+## FASE 3.5 — BUCLE DE AUTOCRÍTICA · `references/12-revision-visual.md`
+
+Snapshots de cada beat asentado y de la mitad de cada transición → contact sheet → nota 1-10 en gancho,
+legibilidad móvil, calidad del movimiento, variedad, composición, marca y sincronía → arregla los 3 peores →
+repite hasta **todo ≥ 8** (máx. 3 rondas). Pruebas anti-PowerPoint. Solo entonces render en alta.
 
 ## FASE 4 — SFX, QC Y ENTREGA · `references/03-sfx-y-qc.md`
 
-1. SFX sutiles con `scripts/make-sfx.sh` (sin música).
+1. SFX sutiles (sin música en Modo A): `bash scripts/sfx-kit.sh motion/sfx` deja los sintéticos de `make-sfx.sh` + la
+   librería CC0 de sonidos reales (clics, teclas, papel, madera). Sonidos de objetos reales, no de videojuego;
+   una fila de la tabla por acción visible. Modo B: **partitura original** (`plantillas/score-plantilla.py`)
+   + máster con `scripts/mux-master.sh` (−14 LUFS). Ver `03-sfx-y-qc.md`.
 2. Render `--quality standard` → QC con frames (ffmpeg) + `hyperframes validate/inspect` (huecos,
    solapes, sincronía, legibilidad) → arreglar.
 3. Mezcla SFX en post (`scripts/mix-sfx.py`).
@@ -157,7 +202,10 @@ sin gaps >4s antes de renderizar.
 5. **CIERRE DE MARCA (obligatorio):** pega la cortinilla oficial con disolución cruzada —
    `bash ~/.claude/skills/reel-edita-vdl/scripts/cierre.sh <reel-montado.mp4> REEL-<nombre>-FINAL.mp4 0.5`
    (ver `estilo.md` §8). Deja ~0.5-0.8s de cola de silencio para que no pise voz.
-6. Copia el entregable final a la carpeta **`AF/`** del proyecto (además de `motion/renders/`).
+6. **MINIATURA (frame 0):** `bash ~/.claude/skills/reel-edita-vdl/scripts/poster.sh AF/REEL-<nombre>-FINAL.mp4 <segundo>`
+   — elige el fotograma más fuerte ya asentado (texto entero, sin transición); lo guarda como `.jpg` y lo
+   hornea como frame 0 (la miniatura de LinkedIn/X/WhatsApp). El `.jpg` sirve de portada en IG/TikTok/YouTube.
+7. Copia el entregable final a la carpeta **`AF/`** del proyecto (además de `motion/renders/`).
 
 ## FASE 5 — REVISOR (subagente independiente, OBLIGATORIO) · `references/05-revisor.md`
 
@@ -205,8 +253,13 @@ y sin blockers.
 - **Si el sujeto no mira a cámara, no sale:** se cubre con visual full-screen (paso gaze en Fase 1.5, verificado en vídeo).
 - **Isotipo `<`: NO se pone.** Ni sting, ni esquina, ni endcard, ni marca de agua. Solo si VdL lo pide
   explícitamente para ese vídeo; entonces nunca sobre el rostro ni sobre los subtítulos.
-- Transiciones cámara↔escena instantáneas (sin crossfade con restos); subtítulos suprimidos durante escenas full-screen.
+- Transiciones cámara↔escena sin crossfade con restos (corte limpio o **cut-the-curve** en la corriente
+  izquierda); subtítulos suprimidos durante escenas full-screen. Nunca el signo de Z invertido en un corte.
 - **Zoom-in rápido (`snap`) MÁXIMO 3 veces en todo el reel.** Es un recurso puntual, no un relleno de
-  ritmo. Para los demás beats usa rótulos lower-third, reveals de escena, cambios de encuadre o floats.
+  ritmo. Para los demás beats usa rótulos lower-third, reveals de escena o cambios de encuadre.
+- **Golpes de pantalla completa (flash, shake, bombeo) ≤ 3 por pieza.** Nada que flote, lata o respire en
+  bucle (solo el fondo liquid). Curvas solo de la familia VdL (`10-motion-vdl.md` §2): sin `bounce`/`elastic`.
+- **Catálogo antes que hacer a mano** (`11-catalogo-y-recetas.md`); packs de skills de terceros NO se
+  instalan sin revisión (ver su §4).
 - Que NO parezca hecho por IA: evita clichés (píldoras "EL PROBLEMA/LA SOLUCIÓN", etiquetas-capítulo genéricas).
 - Determinismo Hyperframes: sin `Math.random()`/`Date.now()`; `repeat` finito; timelines `paused`.

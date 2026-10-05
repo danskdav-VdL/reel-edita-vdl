@@ -11,3 +11,13 @@ Icon?
 # Python
 __pycache__/
 *.pyc
+
+# SFX CC0 importados (se regeneran con scripts/import-sfx-kenney.sh)
+assets/sfx-kenney/
+
+# Renders de los ejemplos (se regeneran)
+ejemplos/**/AF/
+ejemplos/**/renders/
+ejemplos/**/snapshots/
+ejemplos/**/edicion/audio/*.wav
+ejemplos/**/.hyperframes/

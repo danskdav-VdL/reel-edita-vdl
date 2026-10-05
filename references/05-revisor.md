@@ -46,6 +46,21 @@ Spawnea un subagente (tool `Agent`, tipo `general-purpose`) con el prompt de aba
 >     cruzada** (no corte seco). Comprueba en los frames finales que está, que la disolución es suave, y que
 >     **no corta ninguna palabra** (aísla el audio del tramo y confirma que la voz acabó antes). Si falta la
 >     cortinilla, o hay un endcard de marca hecho a mano en su lugar, o la disolución pisa voz → **BLOCKER**.
+> 12. **Miniatura:** el frame 0 debe ser un fotograma fuerte y asentado (no negro, no a mitad de transición)
+>     y debe existir su `.jpg` al lado del final → si no, WARNING.
+> 13. **Modo B (vídeo de proyecto):** cualquier dato real de cliente (empresa, persona, matrícula, email,
+>     importe) o cualquier secreto visible (clave, token, URL interna con credenciales) → **BLOCKER**. Cifras
+>     o claims que no estén en la fuente del proyecto → **BLOCKER**.
+> 14. **Look IA y sistema de movimiento** (`10-motion-vdl.md` §7 y §2): recorre la lista negra con los
+>     frames. Curvas fuera de la familia VdL, `bounce`/`elastic`, elementos que flotan/laten/respiran en
+>     bucle, más de 3 golpes de pantalla completa (flash/shake/bombeo), la misma transición vistosa en cada
+>     corte, layout de diapositiva (prueba anti-PowerPoint de `12-revision-visual.md` §3) → **WARNING**
+>     (BLOCKER si son 3 o más o si es el gancho).
+> 15. **Cortes vivos** (Modo B, o Modo A con 2+ escenas full-screen seguidas): `seam-gate.mjs verify` con
+>     el `motion/ledger.json` → exit 0. Si falla, o no hay ledger en Modo B → **BLOCKER**. Comprueba también
+>     el signo de Z en el cold open (dato que crece + cara que encoge = vector invertido → BLOCKER).
+> 16. **Legibilidad real:** reduce 2-3 frames con texto a 480 px de ancho; lo que hay que leer debe leerse
+>     y estar ≥ ~0.3 s/palabra en pantalla entero. Texto en "medio legible" → WARNING; ilegible → BLOCKER.
 >
 > Calcula también un radar `scores` 0-10 (enteros). Mantén PASS/FAIL como compuerta dura: el radar es informativo y alimenta el Loop de retención (correlacionar score con retención-3s), no sustituye los blockers.
 > - `corte`: 10 si `verify-cut.py` sale exit 0 y la lectura real fluye limpia; baja con cada repetición, silencio o corte raro.
@@ -53,9 +68,10 @@ Spawnea un subagente (tool `Agent`, tipo `general-purpose`) con el prompt de aba
 > - `sincronia`: baja con desfases visual/audio >0.5s.
 > - `legibilidad`: baja por textos fuera de sitio, solapes o safe zone rota.
 > - `antihumo`: baja por datos inventados, clichés IA o afirmaciones que el audio no sostiene.
+> - `motion`: 10 si cumple la familia de curvas, cortes vivos y cero idle; baja por cada punto del check 14.
 >
 > Devuelve SOLO este JSON:
-> `{"verdict":"PASS|FAIL","scores":{"corte":N,"ritmo":N,"sincronia":N,"legibilidad":N,"antihumo":N},"blockers":["..."],"warnings":["..."],"notes":"resumen 1-2 frases"}`
+> `{"verdict":"PASS|FAIL","scores":{"corte":N,"ritmo":N,"sincronia":N,"legibilidad":N,"antihumo":N,"motion":N},"blockers":["..."],"warnings":["..."],"notes":"resumen 1-2 frases"}`
 
 ## Regla de entrega
 

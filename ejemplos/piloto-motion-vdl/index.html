@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face{font-family:'VdLSora';font-weight:300;src:url('assets/fonts/sora-latin-300-normal.woff2') format('woff2')}
+      @font-face{font-family:'VdLSora';font-weight:600;src:url('assets/fonts/sora-latin-600-normal.woff2') format('woff2')}
+      @font-face{font-family:'VdLOnest';font-weight:400;src:url('assets/fonts/onest-latin-400-normal.woff2') format('woff2')}
+      @font-face{font-family:'VdLOnest';font-weight:500;src:url('assets/fonts/onest-latin-500-normal.woff2') format('woff2')}
+      :root{--navy:#00004b;--lime:#aae05a;--magenta:#b41e82;--violet:#3a2770;--lilac:#c865d1;--ink:#ffffff;
+        --display:'VdLSora',sans-serif;--text:'VdLOnest',sans-serif}
+      *{margin:0;padding:0;box-sizing:border-box}
+      html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:var(--navy)}
+      #root{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--navy);color:var(--ink);font-family:var(--text)}
+      /* fondo liquid de marca (estilo.md §2) — la única capa ambiente */
+      #bg{position:absolute;top:0;left:0;width:1080px;height:1920px;background:var(--navy);overflow:hidden;z-index:0}
+      #bg .blob{position:absolute;width:1200px;height:1200px;border-radius:50%;filter:blur(90px);opacity:.5;mix-blend-mode:screen;will-change:transform}
+      .b-lime{background:radial-gradient(circle,#aae05a 0%,transparent 62%);top:-260px;left:-300px;opacity:.32}
+      .b-magenta{background:radial-gradient(circle,#b41e82 0%,transparent 62%);top:1000px;left:420px}
+      .b-violet{background:radial-gradient(circle,#3a2770 0%,transparent 62%);top:320px;left:520px}
+      .b-lilac{background:radial-gradient(circle,#c865d1 0%,transparent 60%);top:1300px;left:-200px;opacity:.35}
+      .esc{position:absolute;top:0;left:0;width:1080px;height:1920px;z-index:2}
+      .kicker{position:absolute;left:96px;font-family:var(--text);font-weight:500;font-size:34px;color:var(--lime);letter-spacing:.02em}
+      .head{position:absolute;left:96px;width:888px;font-family:var(--display);font-weight:600;font-size:120px;line-height:1.06;letter-spacing:-.02em}
+      .head .w{display:inline-block}
+      .head .em{color:var(--lime)}
+      .sub{position:absolute;left:96px;width:860px;font-family:var(--text);font-weight:400;font-size:46px;line-height:1.3;color:rgba(255,255,255,.86)}
+      .sub .w{display:inline-block}
+      /* escena 3: la UI (datos ficticios) */
+      #card{position:absolute;top:0;left:0;width:888px;border-radius:36px;background:#fff;color:#14142b;padding:44px 44px 48px;box-shadow:0 40px 90px rgba(0,0,30,.45)}
+      #card .top{display:flex;justify-content:space-between;align-items:center;font-family:var(--text);font-weight:500;font-size:32px;color:#5b5b7a}
+      #card .row{margin-top:34px;padding:30px;border-radius:22px;background:#f3f3fa}
+      #card .who{font-family:var(--text);font-weight:500;font-size:32px;color:#5b5b7a}
+      #card .msg{margin-top:12px;font-family:var(--text);font-weight:400;font-size:42px;line-height:1.25;color:#14142b}
+      .chip{position:absolute;top:0;left:0;font-family:var(--text);font-weight:500;font-size:32px;padding:10px 24px;border-radius:999px;white-space:nowrap}
+      #chipA{background:#fbe3f1;color:#8a1563}
+      #chipB{background:#e6f6d3;color:#2e5410}
+      #chips{position:relative;width:230px;height:62px}
+      #btn{display:inline-block;margin-top:34px;font-family:var(--text);font-weight:500;font-size:34px;background:var(--navy);color:#fff;padding:22px 34px;border-radius:18px}
+      #reply{position:absolute;top:540px;left:120px;width:768px;padding:28px 32px;border-radius:26px 26px 6px 26px;background:#16166a;border:2px solid rgba(170,224,90,.55);color:#fff;font-family:var(--text);font-size:40px;line-height:1.28}
+      #reply small{display:block;margin-top:12px;font-size:32px;color:var(--lime)}
+      #cursor{position:absolute;top:0;left:0;width:96px;height:96px;z-index:9;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+      #ripple{position:absolute;top:0;left:0;width:120px;height:120px;border-radius:50%;border:4px solid var(--lime);z-index:8}
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-umm9" id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="1080" data-height="1920">
+      <div data-hf-id="hf-2xc0" id="bg"><span data-hf-id="hf-e3gh" data-layout-allow-overflow="" class="blob b-lime"></span><span data-hf-id="hf-z7zx" data-layout-allow-overflow="" class="blob b-magenta"></span><span data-hf-id="hf-tkon" data-layout-allow-overflow="" class="blob b-violet"></span><span data-hf-id="hf-ktu7" data-layout-allow-overflow="" class="blob b-lilac"></span></div>
+
+      <div data-hf-id="hf-x7ye" class="esc" id="esc-1">
+        <div data-hf-id="hf-1pmz" class="kicker" style="top:560px">// atención al cliente</div>
+        <div data-hf-id="hf-9ie5" class="head" id="h1" style="top:630px"><span data-hf-id="hf-dauv" class="w">Cada</span> <span data-hf-id="hf-bihb" class="w">mensaje,</span><br data-hf-id="hf-x5px"><span data-hf-id="hf-iegm" class="w">contestado</span><br data-hf-id="hf-rsrt"><span data-hf-id="hf-ztxd" class="w em">a</span> <span data-hf-id="hf-mit6" class="w em">su</span> <span data-hf-id="hf-mida" class="w em">hora</span></div>
+      </div>
+
+      <div data-hf-id="hf-t9ud" class="esc" id="esc-2">
+        <div data-hf-id="hf-fagu" class="head" id="h2" style="top:700px"><span data-hf-id="hf-hszt" class="w">Lo</span> <span data-hf-id="hf-pu1r" class="w">hace</span><br data-hf-id="hf-szow"><span data-hf-id="hf-4v9l" class="w em">un</span> <span data-hf-id="hf-d7a6" class="w em">agente</span></div>
+        <div data-hf-id="hf-qrzv" class="sub" id="s2" style="top:1000px"><span data-hf-id="hf-0pcz" class="w">Tu</span> <span data-hf-id="hf-tte7" class="w">equipo,</span> <span data-hf-id="hf-b7a3" class="w">a</span> <span data-hf-id="hf-duzt" class="w">lo</span> <span data-hf-id="hf-d7gp" class="w">importante</span></div>
+      </div>
+
+      <div data-hf-id="hf-si6k" class="esc" id="esc-3">
+        <div data-hf-id="hf-veq9" class="kicker" style="top:360px">// así se ve</div>
+        <div data-hf-id="hf-dj1g" id="grp" style="position:absolute;top:470px;left:96px;width:888px;height:900px">
+          <div data-hf-id="hf-55rf" id="card">
+            <div data-hf-id="hf-sijt" class="top"><span data-hf-id="hf-vl8l">Bandeja · WhatsApp</span><div data-hf-id="hf-f8d2" id="chips"><span data-hf-id="hf-kbp8" class="chip" id="chipA">Pendiente</span><span data-hf-id="hf-z746" class="chip" id="chipB">Resuelto</span></div></div>
+            <div data-hf-id="hf-thy4" class="row"><div data-hf-id="hf-79q7" class="who">Laura G. · 23:47</div><div data-hf-id="hf-4c0u" class="msg">¿Puedo cambiar la cita al jueves?</div></div>
+            <div data-hf-id="hf-bvh3" id="btn">Responder con IA</div>
+          </div>
+          <div data-hf-id="hf-0r8u" id="reply">Claro, Laura. Te paso al jueves a las 10:00. ¿Te va bien?<small data-hf-id="hf-byoh">Agente · enviado</small></div>
+        </div>
+        <div data-hf-id="hf-3xt1" class="sub" id="s3" style="top:1190px;font-family:var(--display);font-weight:600;font-size:60px;color:#fff"><span data-hf-id="hf-vfs8" class="w">Contestado.</span> <span data-hf-id="hf-pa5i" class="w" style="color:var(--lime)">23:47.</span></div>
+      </div>
+
+      <div data-hf-id="hf-l3gf" id="ripple"></div>
+      <svg data-hf-id="hf-wsq9" id="cursor" viewBox="0 0 24 24"><path data-hf-id="hf-cvux" d="M4 2 L4 19 L8.6 14.6 L11.6 21.4 L14.4 20.2 L11.4 13.5 L18 13.5 Z" fill="#1c1c1c" stroke="#fff" stroke-width="1.4" stroke-linejoin="round" /></svg>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+      const DUR = 12;
+
+      // nudge curve (10-motion-vdl.md §3)
+      function nudge(sel, prop, a, b, t, d){
+        const D = b - a;
+        tl.fromTo(sel, {[prop]: a}, {[prop]: a + D*0.10, duration: d*0.20, ease: "power3.in", immediateRender:false}, t);
+        tl.to(sel, {[prop]: a + D*0.75, duration: d*0.18, ease: "none"}, t + d*0.20);
+        tl.to(sel, {[prop]: b, duration: d*0.62, ease: "power4.out"}, t + d*0.38);
+      }
+      // waterfall entry (cut-the-curve §6): opacidad binaria, desde abajo, huecos que se acortan ×0.84
+      function waterfall(sel, t0, gap0, opts={}){
+        const els = gsap.utils.toArray(sel); let t = t0, gap = gap0;
+        els.forEach((el, i) => {
+          const heavy = el.classList.contains("em");
+          gsap.set(el, {y: heavy ? 76 : 48, autoAlpha: 0});
+          tl.set(el, {autoAlpha: 1}, t);
+          tl.to(el, {y: 0, duration: heavy ? 0.2 : 0.15, ease: "power4.out"}, t);
+          t += gap; gap *= 0.84;
+        });
+        return t;
+      }
+
+      // fondo liquid (ambiente: sine, ciclo lento)
+      const cyc = 14, n = Math.max(1, Math.round(DUR/cyc));
+      [[".b-lime",260,180,1.15],[".b-magenta",-220,-160,1.2],[".b-violet",180,-220,1.1],[".b-lilac",-200,200,1.18]]
+        .forEach(([s,dx,dy,ds]) => tl.to(s,{x:dx,y:dy,scale:ds,duration:cyc,yoyo:true,repeat:n,ease:"sine.inOut"},0));
+
+      // ESCENA 1 (0-4): cascada + cámara con intención (push-in continuo en una dirección)
+      gsap.set("#esc-1 .kicker", {autoAlpha: 0});
+      tl.set("#esc-1 .kicker", {autoAlpha: 1}, 0.10);
+      tl.fromTo("#esc-1 .kicker", {y: 30}, {y: 0, duration: 0.3, ease: "power4.out", immediateRender:false}, 0.10);
+      waterfall("#h1 .w", 0.22, 0.14);
+      tl.fromTo("#h1", {scale: 1}, {scale: 1.05, duration: 2.5, ease: "none", transformOrigin: "0% 50%", immediateRender:false}, 1.25);
+
+      // ESCENA 2 (4-8): llega compuesta (sin entradas propias en la ventana del corte); revelado por fases
+      gsap.set("#s2 .w", {autoAlpha: 0});
+      waterfall("#s2 .w", 5.2, 0.12);
+      tl.fromTo("#h2", {x: 0}, {x: -18, duration: 2.6, ease: "none", immediateRender:false}, 5.0);
+
+      // ESCENA 3 (8-12): UI que vive + cursor que guía (su clic dispara el cambio)
+      gsap.set("#card", {y: 0}); gsap.set("#chipB", {autoAlpha: 0}); gsap.set("#reply", {autoAlpha: 0, y: 40});
+      gsap.set("#s3 .w", {autoAlpha: 0}); gsap.set("#cursor", {x: 1180, y: 1720, rotation: -18}); gsap.set("#ripple", {autoAlpha: 0, scale: 0.4});
+      // cursor: entra desde fuera de cuadro y llega a la punta del botón (btn ~ x 150-470, y 930)
+      tl.to("#cursor", {x: 284, y: 830, rotation: 0, duration: 0.9, ease: "power4.out"}, 8.55);
+      // clic en 9.6: aplastamiento + onda + cambio de estado EN EL MISMO FRAME
+      tl.to("#btn", {scale: 0.94, duration: 0.07, ease: "power4.out"}, 9.6);
+      tl.to("#btn", {scale: 1, duration: 0.3, ease: "back.out(1.4)"}, 9.67);
+      tl.to("#cursor", {scale: 0.9, duration: 0.07, ease: "power4.out"}, 9.6);
+      tl.to("#cursor", {scale: 1, duration: 0.25, ease: "power4.out"}, 9.67);
+      tl.set("#ripple", {x: 240, y: 778, autoAlpha: 1}, 9.6);
+      tl.to("#ripple", {scale: 1.6, autoAlpha: 0, duration: 0.5, ease: "power4.out"}, 9.6);
+      tl.set("#chipA", {autoAlpha: 0}, 9.6); tl.set("#chipB", {autoAlpha: 1}, 9.6);
+      tl.fromTo("#chipB", {scale: 0.9}, {scale: 1, duration: 0.34, ease: "back.out(1.4)", immediateRender:false}, 9.6);
+      // pausa antes del clímax (0.35 s) y llega la respuesta
+      tl.set("#reply", {autoAlpha: 1}, 9.95);
+      tl.to("#reply", {y: 0, duration: 0.45, ease: "power4.out"}, 9.95);
+      // el cursor se va por donde vino (sale con power4.in)
+      tl.to("#cursor", {x: 1180, y: 800, duration: 0.4, ease: "power4.in"}, 9.8);   // sale en horizontal, sin cruzar la respuesta
+      // recoloca: el grupo sube con la nudge curve para dejar sitio al remate
+      tl.to("#esc-3 .kicker", {y: -26, autoAlpha: 0, duration: 0.3, ease: "power4.in"}, 10.3);   // se-va antes de que suba el grupo
+      nudge("#grp", "y", 0, -100, 10.55, 0.9);
+      waterfall("#s3 .w", 10.95, 0.16);
+
+      // <seams:auto> — generated by seam-stamp.mjs from ledger.json; do not hand-edit.
+      // Regenerate: node <motion-doctrine>/scripts/seam-stamp.mjs --ledger ledger.json --write index.html
+      gsap.set("#esc-1", { autoAlpha: 1, xPercent: 0, yPercent: 0, scale: 1, filter: "blur(0px)", transformOrigin: "50% 50%" });
+      gsap.set(["#esc-3"], { autoAlpha: 0, xPercent: 0, yPercent: 0, scale: 1, filter: "blur(0px)", transformOrigin: "50% 50%" });
+      gsap.set("#esc-2", { autoAlpha: 0, scale: 1.25, filter: "blur(10px)", xPercent: 0, yPercent: 0, transformOrigin: "50% 50%" });
+      
+      // SEAM — esc-1→esc-2 : inverse zoom-through (llegada del payoff) (cut @4)
+      tl.to("#esc-1", { scale: 0.8, filter: "blur(10px)", duration: 0.21, ease: "power3.in" }, 3.79);
+      tl.to("#esc-1", { autoAlpha: 0, duration: 0.21, ease: "none" }, 3.79);
+      tl.set("#esc-1", { autoAlpha: 0 }, 4);
+      tl.fromTo("#esc-2", { autoAlpha: 0.15, scale: 1.25, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1.0, filter: "blur(0px)", duration: 0.5, ease: "expo.out", immediateRender: false }, 4);
+      
+      // SEAM — esc-2→esc-3 : cut-the-curve LEFT (la corriente) (cut @8)
+      tl.to("#esc-2", { xPercent: -12, autoAlpha: 0, duration: 0.34, ease: "power3.in" }, 7.66);
+      tl.set("#esc-2", { autoAlpha: 0 }, 8);
+      tl.fromTo("#esc-3", { xPercent: 10, autoAlpha: 0.35 }, { xPercent: 0, autoAlpha: 1, duration: 0.42, ease: "power4.out", immediateRender: false }, 8);
+      
+      // </seams:auto>
+      tl.to("#root", {opacity: 1, duration: 0.01}, DUR - 0.01);
+      tl.seek(0);
+    </script>
+  </body>
+</html>

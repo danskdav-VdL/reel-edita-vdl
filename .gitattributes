@@ -1,0 +1,4 @@
+# Scripts siempre con LF (bash falla con CRLF en Windows)
+*.sh text eol=lf
+*.py text eol=lf
+build.sh text eol=lf

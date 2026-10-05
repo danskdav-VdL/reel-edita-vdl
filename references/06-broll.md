@@ -6,6 +6,27 @@ VdL usa **B-roll real** (capturas de webs/marcas) y **assets propios** que aport
 Recuerda el gotcha del motor: el B-roll (#broll, z:2) va DEBAJO de la cámara (#camera, z:5). Para que
 se vea, la cámara DEBE ir en **PiP** (abajo-dcha). Cada escena B-roll → `camPiP()`.
 
+## 0. PRIMERO: el banco propio (`BROLL_DIR`, por defecto ./broll)
+
+Antes de capturar webs o diseñar escenas, **mira el banco**: clips y fotos reales, reutilizables.
+- **Carpetas** (adaptables): `01-escritorio · 02-pantalla · 03-manos · 04-producto · 05-equipo · 06-ambiente · 07-fotos`…
+- **Nombre = búsqueda:** `<categoria>_<que-se-ve-con-guiones>_<nn>.<ext>` (stock: `…_stk-<fuente>-<id>` + ficha `.json`).
+
+1. `python3 scripts/broll-index.py` → `index.json` (archivo, categoría, tags, duración, fps, orientación, origen, `usado_en`).
+2. Para cada tramo del beat sheet, busca por tags/categoría lo que ilustra la frase.
+3. **Copia** (no muevas) los elegidos a `motion/assets/broll/`, rutas relativas.
+4. Verticales a full-frame o split; horizontales recortados o en marco. Recorta 1 s de margen. No repitas un
+   clip usado en los 3 últimos reels. Propio > stock.
+5. Al entregar, añade el proyecto a `usado_en` de cada clip usado.
+6. **Stock** si no hay plano propio (revisión visual obligatoria, nada entra sin verlo):
+   `python3 scripts/stock-search.py buscar "<query en inglés>" --tipo video` → revisa `_candidatos/<busqueda>/hoja.jpg`
+   con Read → `python3 scripts/stock-search.py bajar --busqueda <slug> --elegidos 2,7 --categoria <cat> --desc <que-se-ve>`
+   → `bash scripts/grade-look.sh <clip> <salida> 0.7 --vertical` (etalonado VdL + recorte 9:16) → `broll-index.py`.
+   Claves en `.env.local`: `PIXABAY_API_KEY` (vídeo+foto), `UNSPLASH_ACCESS_KEY` (fotos). Pixabay casi no tiene
+   vertical y **mezcla contenido generado con IA** → descártalo al revisar. Máx. ~40 % stock por reel, siempre
+   etalonado, personas de stock **nunca** presentadas como el equipo o clientes, sin marcas de terceros visibles.
+7. Si nada encaja, sigue con capturas/logos/escenas y **anota en el resumen qué plano faltó** para grabarlo.
+
 ## 1. B-roll real con firecrawl (capturas de webs/logos)
 
 `FIRECRAWL_API_KEY` está en el `.env.local` del proyecto. Úsalo para traer capturas reales de una web,

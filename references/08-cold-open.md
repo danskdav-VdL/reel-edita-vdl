@@ -8,16 +8,22 @@ para no romper la sincronía del cuerpo). Sin imágenes IA (no activadas): el ga
 
 **A · Resultado-real (default).** Enseña el payoff antes de explicarlo: la cifra/resultado/demo más
 fuerte a pantalla completa que estalla y revela la cara.
-- Dato gigante en **Sora 600** (keyword en lime) que entra con slam (`scale 1.32→1` en 0.16s) +
-  micro-shake; a ~0.8s estalla (`scale→1.5, opacity→0, blur`) + `flash` y revela la cámara (zoom-out).
+- Dato gigante en **Sora 600** (keyword en lime) que LLEGA en Z (`revela`: `scale 1.25→1`, `blur 10→0`,
+  `expo.out` 0.5s). Cuando ya se ha leído (~1.2-1.5s), **inverse zoom-through**: el dato se aleja
+  (`1→0.8`, blur 10, `power3.in` 0.2s) y la cámara llega también alejándose (`1.25→1`, `expo.out`).
+  Mismo signo de Z a los dos lados del corte (`10-motion-vdl.md` §4); sin shake. El `flash` solo si este
+  es uno de los ≤ 3 golpes de pantalla completa de la pieza.
 - El dato **tiene que decirse** en el vídeo (nada inventado).
 
 **B · Texto-hook.** Una frase-gancho potente (pregunta o afirmación de contraste, estilo VdL:
 "Porque crecer no es vender más. Es vender mejor.") en tipografía grande sobre el fondo liquid animado,
 palabra clave en lime. Úsalo cuando no hay un dato/imagen fuerte pero sí una idea que frena el scroll.
 
-**C · Micro-tráiler (0.8s).** Ráfaga de 2-3 flashes de los mejores momentos/escenas del reel con
+**C · Micro-tráiler (0.8s).** (Gasta golpes de pantalla completa: cuéntalos.) Ráfaga de 2-3 flashes de los mejores momentos/escenas del reel con
 whooshes, y cae en la cámara. Para vídeos con varias piezas visuales potentes.
+
+**E · Portada con recorte.** Como un texto-hook pero con la persona recortada DELANTE del titular
+enorme (receta R8 de `04-recetas.md`). Para frases-tesis potentes.
 
 ## Reglas
 

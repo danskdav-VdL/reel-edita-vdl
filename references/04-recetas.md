@@ -4,6 +4,10 @@
 (`estilo.md` §8) y **no lleva isotipo** en el cuerpo (`estilo.md` §4). Los beat sheets de abajo acaban
 en "[CORTINILLA]" justo por eso.
 
+**El movimiento de TODAS las recetas sigue `10-motion-vdl.md`** (familia de curvas, ley del corte, nada
+idle, un héroe por plano) y se revisa con `12-revision-visual.md`. Antes de construir un efecto, búscalo
+en el catálogo (`11-catalogo-y-recetas.md`).
+
 **Framework universal (esto es lo que no cambia):
 1. **Lee el vídeo** (mira el corte aprobado): ¿qué tipo de contenido es?, ¿tiene demo?, ¿datos?, ¿es
    conceptual o práctico?, ¿dónde está el gancho?
@@ -20,7 +24,7 @@ Cada receta: **cuándo · capas · ritmo · beat sheet de ejemplo**. Colores y f
 **Cuándo:** VdL habla a cámara explicando algo, sin demo. El caso más común.
 - **Capas:** cámara full-frame en los momentos de conexión; salta a PiP (abajo-dcha) cuando entra un
   B-roll/rótulo que ilustra. Fondo liquid animado detrás en los tramos PiP. Subtítulos siempre.
-- **Ritmo:** medio-ágil. `snap` (zoom-punch) en palabras clave; `kpop`/`wipe` para rótulos; float sutil del PiP.
+- **Ritmo:** medio-ágil. `snap` (zoom-punch, máx. 3) en palabras clave; `kpop`/`wipe` para rótulos; reencuadres con la nudge curve (`camPiP`/`camFull`). Sin float del PiP.
 - **Beat sheet:** [0-3s cold open] → [full-frame gancho + snap en keyword] → [PiP + chip de dato] →
   [full-frame conexión] → [PiP + lista con `type`/checks] → [último tramo a cámara con el CTA] → [CORTINILLA].
 
@@ -28,7 +32,7 @@ Cada receta: **cuándo · capas · ritmo · beat sheet de ejemplo**. Colores y f
 **Cuándo:** VdL enseña una pantalla, web, app o flujo (encaja con "sistemas agénticos", tech, SaaS).
 - **Capas:** pantalla/inserto a full o en marco de navegador; **cara en PiP abajo-dcha encima**.
   B-roll real (firecrawl) para capturas de webs/logos reales (ver `06-broll.md`).
-- **Ritmo:** medio; `typeIn` para comandos/URLs, `snap` sobre lo que señala, whoosh en cambios de vista.
+- **Ritmo:** medio; `typeIn` para comandos/URLs; **cursor grande** (`oversized-cursor`) cuyo clic dispara lo siguiente; la cámara se acerca a lo que se va a pulsar (`ui-focus-zoom`, escala 1.4-2.2, 0.6-0.9 s) y vuelve al resultado — no en cada clic. Mejor la UI recreada con sus tokens y datos ficticios que un pantallazo con pan.
 - **Beat sheet:** [cold open con el resultado de la demo] → [PiP + captura scrolleando] →
   [zoom a la parte clave] → [chip con el "qué acaba de pasar"] → [CTA a cámara] → [CORTINILLA].
 
@@ -42,14 +46,14 @@ Cada receta: **cuándo · capas · ritmo · beat sheet de ejemplo**. Colores y f
 **Cuándo:** frase potente, cifra o cita que merece ser el visual. Úsalo con moderación ("lo justo").
 - **Capas:** fondo liquid animado, tipografía Sora grande, palabra clave en lime (`fillWord`/`wipe`),
   cifras con `slotReveal`. Cámara en PiP o ausente unos segundos.
-- **Ritmo:** ágil en la entrada de palabras (`kpop` stagger), aire después para que respire.
+- **Ritmo:** **waterfall entry** (palabras que suben desde abajo solapadas, opacidad binaria, las pesadas viajan más; `cut-the-curve` §6) y **waterfall cut** entre frases (§4). Frases ≤ 5 palabras. Luego aire (≥ 1 s quieto en la clave).
 - **Beat sheet:** [cifra que estalla con `slotReveal` + `ding`] → [frase kinética] → [vuelve a cámara].
 
 ## R5 · Minimal-editorial (sobrio, premium)
 **Cuándo:** mensaje reflexivo, de marca o de posicionamiento; tono LinkedIn.
 - **Capas:** mucho aire, un solo rótulo Sora Light, fondo liquid MUY sutil (opacidad baja).
   Cámara full-frame o PiP estable.
-- **Ritmo:** con aire, `focusIn` (blur-resolve) en rótulos, transiciones `glass`. Pocos SFX.
+- **Ritmo:** con aire, `focusIn` (blur-resolve) en rótulos, reencuadres con nudge curve, un rack-focus como mucho. Pocos SFX.
 - **Beat sheet:** [cold open sobrio] → [idea 1 con focusIn] → [idea 2] → [cierre sobrio a cámara] → [CORTINILLA].
 
 ## R6 · Con elementos aportados (assets de VdL/cliente)
@@ -76,6 +80,22 @@ una comparación) sin que uno tape al otro. Tercer encuadre junto a full-frame y
   vídeo desplazado. Alterna con full-frame a lo largo del reel.
 - **Ritmo:** entra el visual con revelado sutil (`rev()`) sincronizado a lo que se dice.
 - **Beat sheet ej.:** [dice "mira esto"] → split (cara abajo + captura arriba) → [señala un dato] → snap en el dato.
+
+## R8 · Portada con recorte (persona delante del titular)
+**Cuándo:** frase-tesis potente, arranque de un análisis o remate. Máx. 1-2 veces por reel.
+- **Capas:** fondo liquid de marca → titular ENORME (200-280px, 1-2 palabras) → **persona recortada**
+  (`npx hyperframes remove-background <tramo> -o recorte.webm`, WebM con alfa) por delante tapando parte de
+  las letras → rótulo pequeño. Cámara normal oculta (`opacity:0`) durante el tramo.
+- La persona va al 100 % y POR DELANTE (cumple la regla de "nunca sujeto semitransparente detrás del texto").
+- Recorta solo el tramo que se usa (la 1ª vez descarga el modelo; luego ~0,25 s/fotograma).
+- **Ritmo:** entra el titular, la persona "aparece" delante con corte limpio, 2-3 s, vuelta a cámara.
+
+## R9 · Producto en uso (Modo B / híbrido)
+**Cuándo:** se enseña un proyecto (ver `09-modo-proyecto.md`).
+- **Capas:** fondo de marca → UI del producto en marco (móvil o navegador) con **datos ficticios** →
+  clics/tecleo simulados → rótulo con el "qué acaba de pasar" → en híbrido, cámara en split (R7).
+- **Beat sheet:** [gancho con la afirmación más potente] → [pantalla: entrada] → [acción clave con clic + SFX]
+  → [resultado] → [remate] → [CORTINILLA].
 
 **Iconografía (nada "playschool"):** por defecto **casi sin emojis** (`emoji_level=min`). Para marcar
 ideas usa **glifos limpios / símbolos técnicos** (flechas, `>`, `#`, números de paso, líneas), tipografía

@@ -21,6 +21,15 @@ Reiniciar la sesión → invocable como `/reel-edita-vdl`.
 - **Imprescindibles:** `ffmpeg`, `node`/`npx`, **Hyperframes** (`npx hyperframes`), **Groq** (`GROQ_API_KEY` en `.env.local`).
 - **B-roll:** **firecrawl** (`FIRECRAWL_API_KEY` en `.env.local`) para capturas web; **Magnific** (conector MCP) para imágenes/vídeo IA.
 - **Mirada a cámara:** `mediapipe` + `opencv` (`pip install --user mediapipe opencv-python`).
+- **Capa de diseño de motion** (skills de HeyGen revisadas: HyperFrames oficiales + `motion-doctrine`,
+  `cut-the-curve`, `seam-craft`, `oversized-cursor`), una vez por máquina:
+  ```bash
+  bash scripts/setup-capa-diseno.sh      # instala, aplica el parche Windows del verificador y apaga la telemetría
+  bash scripts/import-sfx-kenney.sh      # 97 SFX CC0 (no se versionan)
+  ```
+- **Partitura original (Modo B):** `numpy` + `scipy` (`pip install --user numpy scipy`).
+- **Windows:** los scripts llaman a `python3`; crea un shim `~/bin/python3` (Git Bash) que ejecute
+  `python` con `PYTHONUTF8=1`.
 
 > Las API keys NO viven en la skill: se leen de un `.env.local` del proyecto (los scripts lo buscan hacia
 > arriba desde el cwd). Este repo **no contiene secretos**.
@@ -31,7 +40,12 @@ reel-edita-vdl/
 ├── SKILL.md            # flujo (Fase 0 leer-brief → 1 corte → 1.5 tratamiento → 2-3 montaje → 4 SFX/QC → 5 revisor)
 ├── perfil.json         # perfil de estilo VdL
 ├── references/         # motor (corte, motion, SFX/QC, revisor) + identidad (estilo, recetas, cold open, subtítulos, B-roll)
-└── scripts/            # islands, cut, verify-cut (compuerta), transcribe-groq, captions, gaze, lint-timeline, make-sfx, mix-sfx, cierre, detect-repeats
+│                       #   09 modo proyecto · 10 SISTEMA DE MOVIMIENTO · 11 catálogo/recetas/plantillas · 12 autocrítica
+├── plantillas/         # score-plantilla.py (partitura original por actos en rejilla de tempo)
+├── ejemplos/           # ejemplo Modo B (estructura)
+└── scripts/            # islands, cut, verify-cut (compuerta), transcribe-groq, captions, gaze, lint-timeline, make-sfx, mix-sfx,
+                        # cierre, detect-repeats, poster, sfx-kit, broll-index, stock-search, grade-look, score_kit,
+                        # mux-master, sync-check, setup-capa-diseno, parches/
 ```
 
 ## Reglas duras de marca (18/08/2026)
@@ -57,3 +71,9 @@ petición explícita, o falta la cortinilla, el reel **no se entrega**.
 - Identidad de marca (fuentes, colores, isotipo) en `recursos/brand-kit-vdl/` del workspace VdL;
   la cortinilla de cierre en `recursos/Cierres reels/`.
 - Requiere un entorno con shell + ffmpeg (Claude Code o Cowork; no el chat web puro).
+
+## Código de terceros
+
+Ver `THIRD_PARTY_NOTICES.md`. Resumen: `scripts/sync-check.mjs` (MIT, iart.ai); el parche
+`scripts/parches/seam-gate-windows.py` modifica `seam-gate.mjs` de HeyGen (Apache-2.0) en la copia instalada;
+las skills de HeyGen se descargan de su repo al instalar (no se redistribuyen aquí).
